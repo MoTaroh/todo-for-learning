@@ -37,7 +37,7 @@ export default function middleware(req: NextRequest) {
   console.log(currentHost);
 
   // rewrites for app pages
-  if (currentHost == "app") {
+  if (currentHost == "app" || currentHost == "todo-for-learning") {
     if (
       url.pathname === "/login" &&
       (req.cookies.get("next-auth.session-token") ||
