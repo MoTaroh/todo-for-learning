@@ -154,6 +154,15 @@ export default function Layout({ siteId, children }: LayoutProps) {
                     Drafts
                   </a>
                 </Link>
+                <Link href={`/site/${router.query.id}/tasks`} passHref>
+                  <a
+                    className={`border-b-2 ${
+                      tab == "tasks" ? "border-black" : "border-transparent"
+                    } py-3`}
+                  >
+                    Tasks
+                  </a>
+                </Link>
                 <Link href={`/site/${router.query.id}/settings`} passHref>
                   <a
                     className={`border-b-2 ${
