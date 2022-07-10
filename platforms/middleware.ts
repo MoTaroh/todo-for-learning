@@ -15,8 +15,6 @@ export default function middleware(req: NextRequest) {
 
   // Get hostname of request (e.g. demo.vercel.pub, demo.localhost:3000)
   const hostname = req.headers.get("host") || "demo.vercel.pub";
-  console.log(hostname);
-  console.log(req.headers);
 
   // Only for demo purposes – remove this if you want to use your root domain as the landing page
   if (hostname === "vercel.pub" || hostname === "platforms.vercel.app") {
@@ -34,10 +32,8 @@ export default function middleware(req: NextRequest) {
           .replace(`.platformize.vercel.app`, "")
       : hostname.replace(`.localhost:3000`, "");
 
-  console.log(currentHost);
-
   // rewrites for app pages
-  if (currentHost == "app" || currentHost == "todo-for-learning") {
+  if (currentHost == "app" || currentHost.startsWith(process.env.APP_HOST)) {
     if (
       url.pathname === "/login" &&
       (req.cookies.get("next-auth.session-token") ||
@@ -51,7 +47,7 @@ export default function middleware(req: NextRequest) {
     return NextResponse.rewrite(url);
   }
 
-  // rewrite root application to `/home` folder
+  // rewrite root application to `/home` folder (for LandingPage)
   if (hostname === "localhost:3000" || hostname === "platformize.vercel.app") {
     url.pathname = `/home${url.pathname}`;
     return NextResponse.rewrite(url);
