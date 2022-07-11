@@ -1,12 +1,19 @@
 import Layout from "@/components/app/Layout";
 import fetcher from "@/lib/fetcher";
-import { Site, Task as TaskType } from "@prisma/client";
+import { Site } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import useSWR from "swr";
 
+interface TaskData {
+  id: string | undefined;
+  name: string;
+  done: boolean;
+  removed: boolean;
+}
+
 interface SiteTaskData {
-  tasks: Array<TaskType>;
+  tasks: Array<TaskData>;
   site: Site | null;
 }
 
@@ -36,8 +43,25 @@ export default function SiteTasks() {
     ],
   };
 
-  const [tasks, setTasks] = useState<TaskType[]>(data.tasks);
-  const handleOnCheck = (id: string, checked: boolean) => {
+  const [text, setText] = useState("");
+  const [tasks, setTasks] = useState<TaskData[]>(data.tasks);
+  const handleOnSubmit = () => {
+    if (!text) return;
+
+    const newTask: TaskData = {
+      id: undefined,
+      name: text,
+      done: false,
+      removed: false,
+    };
+
+    setTasks([newTask, ...tasks]);
+    setText("");
+  };
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setText(e.target.value);
+  };
+  const handleOnCheck = (id: string | undefined, checked: boolean) => {
     const deepCopy = tasks.map((task) => ({ ...task }));
 
     const newTasks = deepCopy.map((task) => {
@@ -70,6 +94,20 @@ export default function SiteTasks() {
           </h1>
         </div>
         <div className="my-10 grid gap-y-8">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleOnSubmit();
+            }}
+          >
+            <input
+              type="text"
+              value={text}
+              placeholder="Add new task"
+              className="w-full rounded focus:ring-black"
+              onChange={(e) => handleOnChange(e)}
+            />
+          </form>
           {tasks ? (
             tasks.length > 0 ? (
               tasks.map((task) => (
@@ -81,13 +119,13 @@ export default function SiteTasks() {
                       id={task.id}
                       checked={task.done}
                       onChange={() => handleOnCheck(task.id, task.done)}
-                      className="h-6 w-6 rounded text-black focus:ring-black"
-                    />
-                    <label htmlFor={task.name} className="font-cal text-2xl">
-                      {task.name}
-                    </label>
+                        className="h-6 w-6 rounded text-lg text-black focus:border-black"
+                      />
+                      <label htmlFor={task.name} className="font-cal text-2xl">
+                        {task.name}
+                      </label>
                   </li>
-                </ul>
+              </ul>
               ))
             ) : (
               <div>no tasks</div>
