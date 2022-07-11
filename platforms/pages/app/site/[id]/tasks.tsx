@@ -28,17 +28,13 @@ export default function SiteTasks() {
         id: "id1",
         name: "Task1",
         done: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        siteId: null,
+        removed: false,
       },
       {
         id: "id2",
         name: "Task2",
         done: false,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        siteId: null,
+        removed: false,
       },
     ],
   };
@@ -69,6 +65,18 @@ export default function SiteTasks() {
         task.done = !checked;
       }
 
+      return task;
+    });
+
+    setTasks(newTasks);
+  };
+  const handleOnRemove = (id: string | undefined, removed: boolean) => {
+    const deepCopy = tasks.map((task) => ({ ...task }));
+
+    const newTasks = deepCopy.map((task) => {
+      if (task.id === id) {
+        task.removed = !removed;
+      }
       return task;
     });
 
@@ -110,23 +118,39 @@ export default function SiteTasks() {
           </form>
           {tasks ? (
             tasks.length > 0 ? (
-              tasks.map((task) => (
-                <ul className="flex flex-col" key={task.id}>
-                  <li className="flex items-center space-x-4">
-                    <input
-                      type="checkbox"
-                      name={task.name}
-                      id={task.id}
-                      checked={task.done}
-                      onChange={() => handleOnCheck(task.id, task.done)}
+              <ul className="flex flex-col space-y-2">
+                {tasks.map((task) => (
+                  <li
+                    key={task.id}
+                    className="flex items-center justify-between rounded group hover:bg-gray-100 h-16 px-3"
+                  >
+                    <div className="flex items-center  space-x-4">
+                      <input
+                        type="checkbox"
+                        name={task.name}
+                        id={task.id}
+                        disabled={task.removed}
+                        checked={task.done}
+                        onChange={() => handleOnCheck(task.id, task.done)}
                         className="h-6 w-6 rounded text-lg text-black focus:border-black"
                       />
                       <label htmlFor={task.name} className="font-cal text-2xl">
                         {task.name}
                       </label>
+                    </div>
+                    <button
+                      onClick={() => handleOnRemove(task.id, task.removed)}
+                      className={`${
+                        task.removed
+                          ? "bg-green-500 hover:bg-green-600"
+                          : "bg-red-500 hover:bg-red-600"
+                      } group-hover:block hidden  text-white px-4 py-2 rounded `}
+                    >
+                      {task.removed ? "Restore" : "Delete"}
+                    </button>
                   </li>
+                ))}
               </ul>
-              ))
             ) : (
               <div>no tasks</div>
             )
