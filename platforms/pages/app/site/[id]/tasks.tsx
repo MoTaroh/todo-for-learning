@@ -1,9 +1,7 @@
 import Layout from "@/components/app/Layout";
-import fetcher from "@/lib/fetcher";
 import { Site } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import useSWR from "swr";
 
 interface TaskData {
   id: string | undefined;
@@ -86,13 +84,6 @@ export default function SiteTasks() {
   const router = useRouter();
   const { id: siteId } = router.query;
 
-  const { data2 } = useSWR<SiteTaskData>(
-    siteId && `/api/task?siteId=${siteId}`,
-    fetcher,
-    {
-      onSuccess: (data) => !data?.site && router.push("/"),
-    }
-  );
   return (
     <Layout>
       <div className="py-20 max-w-screen-xl mx-auto px-10 sm:px-20">
