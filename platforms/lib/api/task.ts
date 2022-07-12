@@ -87,3 +87,51 @@ export async function getTask(
     return res.status(500).end(error);
   }
 }
+
+export async function createTask(
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void | NextApiResponse<Task>> {
+  const { name, done, removed, siteId } = req.body;
+
+  try {
+    const task = await prisma.task.create({
+      data: {
+        name,
+        done,
+        removed,
+        siteId,
+      },
+    });
+
+    return res.status(201).json(task);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).end(error);
+  }
+}
+
+export async function updateTask(
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void | NextApiResponse<Task>> {
+  const { id, name, done, removed } = req.body;
+
+  try {
+    const task = await prisma.task.update({
+      where: {
+        id: id,
+      },
+      data: {
+        name,
+        done,
+        removed,
+      },
+    });
+
+    return res.status(200).json(task);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).end(error);
+  }
+}
