@@ -1,13 +1,17 @@
 import Layout from "@/components/app/Layout";
+import fetcher from "@/lib/fetcher";
+import { HttpMethod } from "@/types";
 import { Site } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import useSWR, { useSWRConfig } from "swr";
 
 interface TaskData {
   id: string | undefined;
   name: string;
   done: boolean;
   removed: boolean;
+  siteId: string | string[] | undefined;
 }
 
 interface SiteTaskData {
@@ -16,30 +20,23 @@ interface SiteTaskData {
 }
 
 export default function SiteTasks() {
-  // dummy data
-  const data = {
-    site: {
-      name: "Mock Site",
-    },
-    tasks: [
-      {
-        id: "id1",
-        name: "Task1",
-        done: true,
-        removed: false,
+  const { mutate } = useSWRConfig();
+  const router = useRouter();
+  const { id: siteId } = router.query;
+
+  const { data } = useSWR<SiteTaskData>(
+    siteId && `/api/task?siteId=${siteId}`,
+    fetcher,
+    {
+      onSuccess: (data) => {
+        !data?.site && router.push("/");
       },
-      {
-        id: "id2",
-        name: "Task2",
-        done: false,
-        removed: false,
-      },
-    ],
-  };
+    }
+  );
 
   const [text, setText] = useState("");
-  const [tasks, setTasks] = useState<TaskData[]>(data.tasks);
-  const handleOnSubmit = () => {
+
+  const handleOnSubmit = async () => {
     if (!text) return;
 
     const newTask: TaskData = {
@@ -47,42 +44,45 @@ export default function SiteTasks() {
       name: text,
       done: false,
       removed: false,
+      siteId: siteId,
     };
 
-    setTasks([newTask, ...tasks]);
+    await fetch(`/api/task`, {
+      method: HttpMethod.POST,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newTask),
+    });
+    mutate(`/api/task?siteId=${siteId}`);
+
     setText("");
   };
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setText(e.target.value);
   };
-  const handleOnCheck = (id: string | undefined, checked: boolean) => {
-    const deepCopy = tasks.map((task) => ({ ...task }));
-
-    const newTasks = deepCopy.map((task) => {
-      if (task.id === id) {
-        task.done = !checked;
-      }
-
-      return task;
+  const handleOnCheck = async (task: TaskData) => {
+    const toUpdate = { ...task, done: !task.done };
+    await fetch(`/api/task`, {
+      method: HttpMethod.PUT,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(toUpdate),
     });
-
-    setTasks(newTasks);
+    mutate(`/api/task?siteId=${siteId}`);
   };
-  const handleOnRemove = (id: string | undefined, removed: boolean) => {
-    const deepCopy = tasks.map((task) => ({ ...task }));
-
-    const newTasks = deepCopy.map((task) => {
-      if (task.id === id) {
-        task.removed = !removed;
-      }
-      return task;
+  const handleOnRemove = async (task: TaskData) => {
+    const toRemove = { ...task, removed: !task.removed };
+    await fetch(`/api/task`, {
+      method: HttpMethod.PUT,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(toRemove),
     });
-
-    setTasks(newTasks);
+    mutate(`/api/task?siteId=${siteId}`);
   };
-
-  const router = useRouter();
-  const { id: siteId } = router.query;
 
   return (
     <Layout>
@@ -107,10 +107,10 @@ export default function SiteTasks() {
               onChange={(e) => handleOnChange(e)}
             />
           </form>
-          {tasks ? (
-            tasks.length > 0 ? (
+          {data ? (
+            data.tasks.length > 0 ? (
               <ul className="flex flex-col space-y-2">
-                {tasks.map((task) => (
+                {data.tasks.map((task) => (
                   <li
                     key={task.id}
                     className="flex items-center justify-between rounded group hover:bg-gray-100 h-16 px-3"
@@ -122,7 +122,7 @@ export default function SiteTasks() {
                         id={task.id}
                         disabled={task.removed}
                         checked={task.done}
-                        onChange={() => handleOnCheck(task.id, task.done)}
+                        onChange={() => handleOnCheck(task)}
                         className="h-6 w-6 rounded text-lg text-black focus:border-black"
                       />
                       <label htmlFor={task.name} className="font-cal text-2xl">
@@ -130,7 +130,7 @@ export default function SiteTasks() {
                       </label>
                     </div>
                     <button
-                      onClick={() => handleOnRemove(task.id, task.removed)}
+                      onClick={() => handleOnRemove(task)}
                       className={`${
                         task.removed
                           ? "bg-green-500 hover:bg-green-600"
