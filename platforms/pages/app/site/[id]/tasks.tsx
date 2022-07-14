@@ -1,95 +1,117 @@
 import Layout from "@/components/app/Layout";
+import { HttpMethod } from "@/types";
 import { Site } from "@prisma/client";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import cuid from "cuid";
 
 interface TaskData {
-  id: string | undefined;
+  readonly id: string | undefined;
   name: string;
   done: boolean;
   removed: boolean;
-}
-
-interface SiteTaskData {
-  tasks: Array<TaskData>;
-  site: Site | null;
+  siteId: string | string[] | undefined;
 }
 
 export default function SiteTasks() {
-  // dummy data
-  const data = {
-    site: {
-      name: "Mock Site",
-    },
-    tasks: [
-      {
-        id: "id1",
-        name: "Task1",
-        done: true,
-        removed: false,
-      },
-      {
-        id: "id2",
-        name: "Task2",
-        done: false,
-        removed: false,
-      },
-    ],
-  };
+  const router = useRouter();
+  const { id: siteId } = router.query;
 
+  const [tasks, setTasks] = useState<TaskData[]>([]);
+  const [site, setSite] = useState<Site | undefined>();
   const [text, setText] = useState("");
-  const [tasks, setTasks] = useState<TaskData[]>(data.tasks);
-  const handleOnSubmit = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    async function fetchTasks() {
+      const res = await fetch(`/api/task?siteId=${siteId}`);
+      if (res.ok) {
+        const fetchedTasks = await res.json();
+        setTasks(fetchedTasks.tasks);
+        setSite(fetchedTasks.site);
+        setIsLoading(false);
+
+        return;
+      }
+      console.error(res);
+    }
+
+    if (router.isReady) fetchTasks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.isReady]);
+
+  const handleOnSubmit = async () => {
     if (!text) return;
 
     const newTask: TaskData = {
-      id: undefined,
+      id: cuid(),
       name: text,
       done: false,
       removed: false,
+      siteId: siteId,
     };
+    const newTasks = [newTask, ...tasks];
 
-    setTasks([newTask, ...tasks]);
+    fetch(`/api/task`, {
+      method: HttpMethod.POST,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newTask),
+    });
+
     setText("");
+    setTasks(newTasks);
   };
+
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setText(e.target.value);
   };
-  const handleOnCheck = (id: string | undefined, checked: boolean) => {
-    const deepCopy = tasks.map((task) => ({ ...task }));
 
-    const newTasks = deepCopy.map((task) => {
-      if (task.id === id) {
-        task.done = !checked;
-      }
-
-      return task;
+  const handleOnCheck = async (task: TaskData) => {
+    const toUpdate = { ...task, done: !task.done };
+    fetch(`/api/task`, {
+      method: HttpMethod.PUT,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(toUpdate),
     });
-
-    setTasks(newTasks);
-  };
-  const handleOnRemove = (id: string | undefined, removed: boolean) => {
-    const deepCopy = tasks.map((task) => ({ ...task }));
-
-    const newTasks = deepCopy.map((task) => {
-      if (task.id === id) {
-        task.removed = !removed;
+    const newTasks = tasks.map((t) => {
+      if (t.id === task.id) {
+        return toUpdate;
       }
-      return task;
+      return t;
     });
 
     setTasks(newTasks);
   };
 
-  const router = useRouter();
-  const { id: siteId } = router.query;
+  const handleOnRemove = async (task: TaskData) => {
+    const toRemove = { ...task, removed: !task.removed };
+    fetch(`/api/task`, {
+      method: HttpMethod.PUT,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(toRemove),
+    });
+    const newTasks = tasks.map((t) => {
+      if (t.id === task.id) {
+        return toRemove;
+      }
+      return t;
+    });
+
+    setTasks(newTasks);
+  };
 
   return (
     <Layout>
       <div className="py-20 max-w-screen-xl mx-auto px-10 sm:px-20">
         <div className="flex">
           <h1 className="font-cal text-5xl">
-            Tasks for {data ? data?.site?.name : "..."}
+            Tasks for {site ? site.name : "..."}
           </h1>
         </div>
         <div className="my-10 grid gap-y-8">
@@ -107,7 +129,7 @@ export default function SiteTasks() {
               onChange={(e) => handleOnChange(e)}
             />
           </form>
-          {tasks ? (
+          {!isLoading ? (
             tasks.length > 0 ? (
               <ul className="flex flex-col space-y-2">
                 {tasks.map((task) => (
@@ -122,7 +144,7 @@ export default function SiteTasks() {
                         id={task.id}
                         disabled={task.removed}
                         checked={task.done}
-                        onChange={() => handleOnCheck(task.id, task.done)}
+                        onChange={() => handleOnCheck(task)}
                         className="h-6 w-6 rounded text-lg text-black focus:border-black"
                       />
                       <label htmlFor={task.name} className="font-cal text-2xl">
@@ -130,7 +152,7 @@ export default function SiteTasks() {
                       </label>
                     </div>
                     <button
-                      onClick={() => handleOnRemove(task.id, task.removed)}
+                      onClick={() => handleOnRemove(task)}
                       className={`${
                         task.removed
                           ? "bg-green-500 hover:bg-green-600"
@@ -146,18 +168,10 @@ export default function SiteTasks() {
               <div>no tasks</div>
             )
           ) : (
-            [0, 1].map((i) => (
-              <div
-                key={i}
-                className="flex flex-col md:flex-row md:h-60 rounded-lg overflow-hidden border border-gray-200"
-              >
-                <div className="relative w-full h-60 md:h-auto md:w-1/3 md:flex-none bg-gray-300 animate-pulse" />
-                <div className="relative p-10 grid gap-5">
-                  <div className="w-28 h-10 rounded-md bg-gray-300 animate-pulse" />
-                  <div className="w-48 h-6 rounded-md bg-gray-300 animate-pulse" />
-                  <div className="w-48 h-6 rounded-md bg-gray-300 animate-pulse" />
-                  <div className="w-48 h-6 rounded-md bg-gray-300 animate-pulse" />
-                </div>
+            [0, 1, 2, 3, 4].map((i) => (
+              <div key={i} className="flex space-x-4 items-center">
+                <div className="w-10 h-10 rounded bg-gray-300 animate-pulse" />
+                <div className="w-full h-10 rounded bg-gray-300 animate-pulse" />
               </div>
             ))
           )}
