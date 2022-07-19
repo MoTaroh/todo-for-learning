@@ -1,0 +1,9 @@
+@startuml TaskManagement
+actor User
+left to right direction
+rectangle {
+    User -- (タスクを登録する)
+    User -- (タスクを完了する)
+    User -- (タスクを削除する)
+}
+@enduml
