@@ -1,4 +1,5 @@
-import { createTask, getTask, updateTask } from "@/lib/api/task";
+import { getTask, updateTask } from "@/lib/api/task";
+import { CreateTaskController } from "@/lib/api/task/presentation/CreateTaskController";
 import { HttpMethod } from "@/types";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
@@ -12,7 +13,8 @@ export default async function task(req: NextApiRequest, res: NextApiResponse) {
     case HttpMethod.GET:
       return getTask(req, res, session);
     case HttpMethod.POST:
-      return createTask(req, res);
+      const controller = new CreateTaskController();
+      return controller.createTask(req, res);
     case HttpMethod.PUT:
       return updateTask(req, res);
     default:
