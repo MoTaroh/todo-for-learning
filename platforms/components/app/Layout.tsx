@@ -116,6 +116,15 @@ export default function Layout({ siteId, children }: LayoutProps) {
                 My Sites
               </a>
             </Link>
+            <Link href="/tasks" passHref>
+              <a
+                className={`border-b-2 ${
+                  tab == "tasks" ? "border-black" : "border-transparent"
+                } py-3`}
+              >
+                Tasks
+              </a>
+            </Link>
             <Link href="/settings" passHref>
               <a
                 className={`border-b-2 ${
