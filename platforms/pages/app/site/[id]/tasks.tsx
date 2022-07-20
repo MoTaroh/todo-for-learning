@@ -3,7 +3,6 @@ import { HttpMethod } from "@/types";
 import { Site } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import cuid from "cuid";
 
 interface TaskData {
   readonly id: string | undefined;
@@ -44,24 +43,28 @@ export default function SiteTasks() {
     if (!text) return;
 
     const newTask: TaskData = {
-      id: cuid(),
+      id: undefined,
       name: text,
       done: false,
       removed: false,
       siteId: siteId,
     };
-    const newTasks = [newTask, ...tasks];
 
-    fetch(`/api/task`, {
+    const res = await fetch(`/api/task`, {
       method: HttpMethod.POST,
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(newTask),
     });
-
-    setText("");
-    setTasks(newTasks);
+    if (res.ok) {
+      const createdTask = await res.json();
+      const newTasks = [createdTask, ...tasks];
+      setText("");
+      setTasks(newTasks);
+    } else {
+      console.error(`Error occured: ${JSON.stringify(res)}`);
+    }
   };
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
