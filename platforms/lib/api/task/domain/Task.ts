@@ -3,10 +3,10 @@ export class Task {
   name: string;
   done: boolean;
   removed: boolean;
-  siteId: string;
+  userId: string;
 
-  constructor(id: string, name: string, siteId: string) {
-    if (!id || !name || !siteId) {
+  constructor(id: string, name: string, userId: string) {
+    if (!id || !name || !userId) {
       throw new Error("Required param is missing.");
     }
 
@@ -14,6 +14,6 @@ export class Task {
     this.name = name;
     this.done = false;
     this.removed = false;
-    this.siteId = siteId;
+    this.userId = userId;
   }
 }
