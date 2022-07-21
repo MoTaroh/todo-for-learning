@@ -3,7 +3,7 @@ import { UpdateTaskController } from "@/lib/api/task/presentation/UpdateTaskCont
 import { HttpMethod } from "@/types";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]";
+import { authOptions } from "../../auth/[...nextauth]";
 
 export default async function handler(
   req: NextApiRequest,
@@ -16,8 +16,8 @@ export default async function handler(
     case HttpMethod.GET:
       const findTaskController = new FindTaskController();
       return findTaskController.findTask(req, res);
-    case HttpMethod.PUT:
-      const updateTaskController = new UpdateTaskController();
-      return updateTaskController.updateTask(req, res);
+    // case HttpMethod.PUT:
+    //   const updateTaskController = new UpdateTaskController();
+    //   return updateTaskController.updateTask(req, res);
   }
 }

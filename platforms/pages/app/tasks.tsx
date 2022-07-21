@@ -65,8 +65,8 @@ export default function Tasks() {
 
   const handleOnCheck = async (task: TaskData) => {
     const toUpdate = { ...task, done: !task.done };
-    fetch(`/api/tasks/${task.id}`, {
-      method: HttpMethod.PUT,
+    fetch(`/api/tasks/${task.id}/done`, {
+      method: HttpMethod.PATCH,
       headers: {
         "Content-Type": "application/json",
       },
