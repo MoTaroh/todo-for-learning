@@ -9,6 +9,6 @@ export class CreateTaskUseCase {
     const taskId = this.taskRepository.generateId();
     const task = new Task(taskId, name, userId);
 
-    return await this.taskRepository.save(task);
+    return await this.taskRepository.create(task);
   }
 }
