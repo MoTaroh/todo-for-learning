@@ -1,4 +1,4 @@
-import { getTask, updateTask } from "@/lib/api/task";
+import { getTask, updateTask } from "@/lib/api/task-deprecated";
 import { CreateTaskController } from "@/lib/api/task/presentation/CreateTaskController";
 import { HttpMethod } from "@/types";
 import { NextApiRequest, NextApiResponse } from "next";
