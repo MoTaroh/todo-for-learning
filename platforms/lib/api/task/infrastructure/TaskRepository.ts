@@ -23,9 +23,16 @@ export class TaskRepository {
     });
   }
 
-  save(task: Task): Promise<TaskType> {
+  create(task: Task): Promise<TaskType> {
     return prisma.task.create({
       data: task,
+    });
+  }
+
+  update(task: Task): Promise<TaskType> {
+    return prisma.task.update({
+      data: task,
+      where: { id: task.id },
     });
   }
 
