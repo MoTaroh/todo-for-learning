@@ -15,9 +15,9 @@ export class CreateTaskController {
     const usecase = new CreateTaskUseCase();
 
     try {
-      const task = await usecase.createTask(name, session.user.id);
+      const newTask = await usecase.execute(name, session.user.id);
 
-      return res.status(201).json(task);
+      return res.status(201).json(newTask);
     } catch (error) {
       console.error(error);
       return res.status(500).end(error);

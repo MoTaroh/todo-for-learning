@@ -1,14 +1,19 @@
 import { Task } from "../domain/Task";
-import { Task as TaskType } from "@prisma/client";
 import { TaskRepository } from "../infrastructure/TaskRepository";
+import { TaskId } from "../domain/TaskId";
 
 export class CreateTaskUseCase {
   taskRepository: TaskRepository = new TaskRepository();
 
-  async createTask(name: string, userId: string): Promise<TaskType> {
-    const taskId = this.taskRepository.generateId();
-    const task = new Task(taskId, name, userId);
+  async execute(name: string, userId: string): Promise<Task> {
+    const task = Task.create(name, userId);
+    try {
+      this.taskRepository.create(task);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
 
-    return await this.taskRepository.create(task);
+    return task;
   }
 }
