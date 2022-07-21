@@ -1,19 +1,66 @@
-export class Task {
-  id: string;
+import { TaskId } from "./TaskId";
+interface TaskType {
+  id: TaskId;
+  name: string;
+  done: boolean;
+  removed: boolean;
+  userId: string;
+}
+
+export class Task implements TaskType {
+  id: TaskId;
   name: string;
   done: boolean;
   removed: boolean;
   userId: string;
 
-  constructor(id: string, name: string, userId: string) {
-    if (!id || !name || !userId) {
-      throw new Error("Required param is missing.");
-    }
-
+  private constructor(
+    id: TaskId,
+    name: string,
+    done: boolean,
+    removed: boolean,
+    userId: string
+  ) {
     this.id = id;
     this.name = name;
-    this.done = false;
-    this.removed = false;
+    this.done = done;
+    this.removed = removed;
     this.userId = userId;
+  }
+
+  // TODO: 値オブジェクトを導入する
+  /**
+   * Factory method
+   * @param name
+   * @param userId
+   * @returns
+   */
+  static create(name: string, userId: string) {
+    const id = new TaskId();
+    const taskName = name;
+    const done = false;
+    const removed = false;
+    const uId = userId;
+
+    return new Task(id, taskName, done, removed, uId);
+  }
+
+  static reconstruct(taskRecord: TaskType) {
+    return new Task(
+      taskRecord.id,
+      taskRecord.name,
+      taskRecord.done,
+      taskRecord.removed,
+      taskRecord.userId
+    );
+  }
+
+  doneTask() {
+    // TODO: use Enum map?
+    this.done = true;
+  }
+  undoneTask() {
+    // TODO: use Enum map?
+    this.done = false;
   }
 }
