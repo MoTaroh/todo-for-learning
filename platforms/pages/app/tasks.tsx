@@ -1,34 +1,27 @@
 import Layout from "@/components/app/Layout";
 import { HttpMethod } from "@/types";
-import { Site } from "@prisma/client";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import cuid from "cuid";
 
 interface TaskData {
   readonly id: string | undefined;
   name: string;
   done: boolean;
   removed: boolean;
-  siteId: string | string[] | undefined;
 }
 
-export default function SiteTasks() {
-  const router = useRouter();
-  const { id: siteId } = router.query;
-
+export default function Tasks() {
   const [tasks, setTasks] = useState<TaskData[]>([]);
-  const [site, setSite] = useState<Site | undefined>();
   const [text, setText] = useState("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     async function fetchTasks() {
-      const res = await fetch(`/api/task?siteId=${siteId}`);
+      const res = await fetch("/api/tasks");
+      console.log(res);
+
       if (res.ok) {
         const fetchedTasks = await res.json();
-        setTasks(fetchedTasks.tasks);
-        setSite(fetchedTasks.site);
+        setTasks(fetchedTasks);
         setIsLoading(false);
 
         return;
@@ -36,32 +29,34 @@ export default function SiteTasks() {
       console.error(res);
     }
 
-    if (router.isReady) fetchTasks();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.isReady]);
+    fetchTasks();
+  }, []);
 
   const handleOnSubmit = async () => {
     if (!text) return;
 
     const newTask: TaskData = {
-      id: cuid(),
+      id: undefined,
       name: text,
       done: false,
       removed: false,
-      siteId: siteId,
     };
-    const newTasks = [newTask, ...tasks];
 
-    fetch(`/api/task`, {
+    const res = await fetch(`/api/tasks`, {
       method: HttpMethod.POST,
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(newTask),
     });
-
-    setText("");
-    setTasks(newTasks);
+    if (res.ok) {
+      const createdTask = await res.json();
+      const newTasks = [createdTask, ...tasks];
+      setText("");
+      setTasks(newTasks);
+    } else {
+      console.error(`Error occured: ${JSON.stringify(res)}`);
+    }
   };
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,8 +65,8 @@ export default function SiteTasks() {
 
   const handleOnCheck = async (task: TaskData) => {
     const toUpdate = { ...task, done: !task.done };
-    fetch(`/api/task`, {
-      method: HttpMethod.PUT,
+    fetch(`/api/tasks/${task.id}/done`, {
+      method: HttpMethod.PATCH,
       headers: {
         "Content-Type": "application/json",
       },
@@ -89,8 +84,8 @@ export default function SiteTasks() {
 
   const handleOnRemove = async (task: TaskData) => {
     const toRemove = { ...task, removed: !task.removed };
-    fetch(`/api/task`, {
-      method: HttpMethod.PUT,
+    fetch(`/api/tasks/${task.id}/removed`, {
+      method: HttpMethod.PATCH,
       headers: {
         "Content-Type": "application/json",
       },
@@ -110,9 +105,7 @@ export default function SiteTasks() {
     <Layout>
       <div className="py-20 max-w-screen-xl mx-auto px-10 sm:px-20">
         <div className="flex">
-          <h1 className="font-cal text-5xl">
-            Tasks for {site ? site.name : "..."}
-          </h1>
+          <h1 className="font-cal text-5xl">My Tasks</h1>
         </div>
         <div className="my-10 grid gap-y-8">
           <form

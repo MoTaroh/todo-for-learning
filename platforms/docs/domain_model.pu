@@ -1,0 +1,21 @@
+@startuml
+
+class Task
+class Site
+
+Task: タスクID
+Task: タスク名
+Task: タスク完了状態
+Task: タスク削除状態
+Task: SiteID
+
+Site: サイトID
+Site: サイト名
+Site: サイト説明
+Site: サブドメイン
+Site: サイトロゴ
+Site: サイト画像
+
+Task --> Site
+
+@enduml
