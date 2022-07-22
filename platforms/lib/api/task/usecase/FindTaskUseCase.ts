@@ -9,6 +9,6 @@ export class FindTaskUseCase {
   }
 
   async findAllTasks(userId: string) {
-    return await this.taskRepository.findMany(userId);
+    return await this.taskRepository.findAll(userId);
   }
 }

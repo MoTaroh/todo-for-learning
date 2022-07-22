@@ -2,10 +2,11 @@ import prisma from "@/lib/prisma";
 import { Task as TaskType } from "@prisma/client";
 import { Task } from "../domain/Task";
 import { TaskId } from "../domain/TaskId";
+import { ITaskRepository } from "../domain/TaskRepository";
 
-export class TaskRepository {
-  findMany(userId: string) {
-    return prisma.task.findMany({
+export class TaskRepository implements ITaskRepository {
+  async findAll(userId: string): Promise<Task[]> {
+    const taskRecords = await prisma.task.findMany({
       where: {
         userId: userId,
       },
@@ -13,6 +14,8 @@ export class TaskRepository {
         createdAt: "desc",
       },
     });
+
+    return taskRecords.map((r) => mapRecordToEntity(r));
   }
 
   async findById(taskId: TaskId): Promise<Task | null> {
