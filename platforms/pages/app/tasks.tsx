@@ -84,8 +84,8 @@ export default function Tasks() {
 
   const handleOnRemove = async (task: TaskData) => {
     const toRemove = { ...task, removed: !task.removed };
-    fetch(`/api/tasks/${task.id}`, {
-      method: HttpMethod.PUT,
+    fetch(`/api/tasks/${task.id}/removed`, {
+      method: HttpMethod.PATCH,
       headers: {
         "Content-Type": "application/json",
       },

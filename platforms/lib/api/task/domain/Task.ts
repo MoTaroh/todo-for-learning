@@ -63,4 +63,10 @@ export class Task implements TaskType {
     // TODO: use Enum map?
     this.done = false;
   }
+  remove() {
+    this.removed = true;
+  }
+  restore() {
+    this.removed = false;
+  }
 }
