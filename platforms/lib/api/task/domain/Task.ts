@@ -1,7 +1,8 @@
 import { TaskId } from "./TaskId";
+import { TaskName } from "./TaskName";
 interface TaskType {
   id: TaskId;
-  name: string;
+  name: TaskName;
   done: boolean;
   removed: boolean;
   userId: string;
@@ -9,14 +10,14 @@ interface TaskType {
 
 export class Task implements TaskType {
   id: TaskId;
-  name: string;
+  name: TaskName;
   done: boolean;
   removed: boolean;
   userId: string;
 
   private constructor(
     id: TaskId,
-    name: string,
+    name: TaskName,
     done: boolean,
     removed: boolean,
     userId: string
@@ -35,7 +36,7 @@ export class Task implements TaskType {
    * @param userId
    * @returns
    */
-  static create(name: string, userId: string) {
+  static create(name: TaskName, userId: string) {
     const id = new TaskId();
     const taskName = name;
     const done = false;
