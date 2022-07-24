@@ -71,11 +71,11 @@
     "typescript": "^4.6.2"
   },
   "lint-staged": {
-    "**/*.{js,ts,tsx,jsx}": [
+    "*.{js,ts,tsx,jsx}": [
       "eslint",
-      "jest --bail --findRelatedTests"
+      "jest --bail --findRelatedTests --passWithNoTests"
     ],
-    "/platforms/**/*.{json,md,html,js,jsx,ts,tsx}": [
+    "*.{json,md,html,js,jsx,ts,tsx}": [
       "prettier --write"
     ]
   }
