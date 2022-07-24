@@ -1,14 +1,13 @@
-import { Task } from '@prisma/client'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { Session } from 'next-auth'
-import { FindTaskUseCase } from '../usecase/FindTaskUseCase'
+import { FindTaskDtoType, FindTaskUseCase } from '../usecase/FindTaskUseCase'
 
 export class FindTaskController {
   async findAllTasks(
     req: NextApiRequest,
     res: NextApiResponse,
     session: Session
-  ): Promise<void | NextApiResponse<Task[]>> {
+  ): Promise<void | NextApiResponse<FindTaskDtoType[]>> {
     if (!session.user.id)
       return res.status(500).end('Server failed to get session user ID')
     const usecase = new FindTaskUseCase()
