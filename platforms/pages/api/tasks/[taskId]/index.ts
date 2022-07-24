@@ -1,23 +1,20 @@
-import { FindTaskController } from "@/lib/api/task/presentation/FindTaskController";
-import { UpdateTaskController } from "@/lib/api/task/presentation/UpdateTaskController";
-import { HttpMethod } from "@/types";
-import { NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from "next-auth";
-import { authOptions } from "../../auth/[...nextauth]";
+import { FindTaskController } from '@/lib/api/task/presentation/FindTaskController'
+import { HttpMethod } from '@/types'
+import { NextApiRequest, NextApiResponse } from 'next'
+import { unstable_getServerSession } from 'next-auth/next'
+import { authOptions } from '../../auth/[...nextauth]'
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const session = await getServerSession({ req, res }, authOptions);
-  if (!session) return res.status(401).end();
+  const session = await unstable_getServerSession(req, res, authOptions)
+  if (!session) return res.status(401).end()
 
   switch (req.method) {
-    case HttpMethod.GET:
-      const findTaskController = new FindTaskController();
-      return findTaskController.findTask(req, res);
-    // case HttpMethod.PUT:
-    //   const updateTaskController = new UpdateTaskController();
-    //   return updateTaskController.updateTask(req, res);
+    case HttpMethod.GET: {
+      const findTaskController = new FindTaskController()
+      return findTaskController.findTask(req, res)
+    }
   }
 }
