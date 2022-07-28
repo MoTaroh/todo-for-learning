@@ -1,28 +1,28 @@
-import Link from "next/link";
-import remarkMdx from "remark-mdx";
-import { MDXRemote } from "next-mdx-remote";
-import { remark } from "remark";
-import { serialize } from "next-mdx-remote/serialize";
-import { useRouter } from "next/router";
+import Link from 'next/link';
+import remarkMdx from 'remark-mdx';
+import { MDXRemote } from 'next-mdx-remote';
+import { remark } from 'remark';
+import { serialize } from 'next-mdx-remote/serialize';
+import { useRouter } from 'next/router';
 
-import BlogCard from "@/components/BlogCard";
-import BlurImage from "@/components/BlurImage";
-import Date from "@/components/Date";
-import Examples from "@/components/mdx/Examples";
-import Layout from "@/components/sites/Layout";
-import Loader from "@/components/sites/Loader";
-import prisma from "@/lib/prisma";
-import Tweet from "@/components/mdx/Tweet";
+import BlogCard from '@/components/BlogCard';
+import BlurImage from '@/components/BlurImage';
+import Date from '@/components/Date';
+import Examples from '@/components/mdx/Examples';
+import Layout from '@/components/sites/Layout';
+import Loader from '@/components/sites/Loader';
+import prisma from '@/lib/prisma';
+import Tweet from '@/components/mdx/Tweet';
 import {
   replaceExamples,
   replaceLinks,
   replaceTweets,
-} from "@/lib/remark-plugins";
+} from '@/lib/remark-plugins';
 
-import type { AdjacentPost, Meta, _SiteSlugData } from "@/types";
-import type { GetStaticPaths, GetStaticProps } from "next";
-import type { MDXRemoteSerializeResult } from "next-mdx-remote";
-import type { ParsedUrlQuery } from "querystring";
+import type { AdjacentPost, Meta, _SiteSlugData } from '@/types';
+import type { GetStaticPaths, GetStaticProps } from 'next';
+import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
+import type { ParsedUrlQuery } from 'querystring';
 
 const components = {
   a: replaceLinks,
@@ -57,7 +57,7 @@ export default function Post({
 
   const meta = {
     description: data.description,
-    logo: "/logo.png",
+    logo: '/logo.png',
     ogImage: data.image,
     ogUrl: `https://${data.site?.subdomain}.vercel.pub/${data.slug}`,
     title: data.title,
@@ -91,7 +91,7 @@ export default function Post({
             <div className="relative w-8 h-8 md:w-12 md:h-12 rounded-full overflow-hidden inline-block align-middle">
               {data.site?.user?.image ? (
                 <BlurImage
-                  alt={data.site?.user?.name ?? "User Avatar"}
+                  alt={data.site?.user?.name ?? 'User Avatar'}
                   height={80}
                   src={data.site.user.image}
                   width={80}
@@ -111,7 +111,7 @@ export default function Post({
       <div className="relative h-80 md:h-150 w-full max-w-screen-lg lg:2/3 md:w-5/6 m-auto mb-10 md:mb-20 md:rounded-2xl overflow-hidden">
         {data.image ? (
           <BlurImage
-            alt={data.title ?? "Post image"}
+            alt={data.title ?? 'Post image'}
             layout="fill"
             objectFit="cover"
             placeholder="blur"
@@ -161,7 +161,7 @@ export const getStaticPaths: GetStaticPaths<PathProps> = async () => {
       published: true,
       // you can remove this if you want to generate all sites at build time
       site: {
-        subdomain: "demo",
+        subdomain: 'demo',
       },
     },
     select: {
@@ -210,7 +210,7 @@ export const getStaticPaths: GetStaticPaths<PathProps> = async () => {
 export const getStaticProps: GetStaticProps<PostProps, PathProps> = async ({
   params,
 }) => {
-  if (!params) throw new Error("No path parameters found");
+  if (!params) throw new Error('No path parameters found');
 
   const { site, slug } = params;
 
@@ -221,7 +221,7 @@ export const getStaticProps: GetStaticProps<PostProps, PathProps> = async ({
     subdomain: site,
   };
 
-  if (site.includes(".")) {
+  if (site.includes('.')) {
     filter = {
       customDomain: site,
     };

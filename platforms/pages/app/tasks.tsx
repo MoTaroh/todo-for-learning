@@ -1,46 +1,46 @@
-import Layout from '@/components/app/Layout'
-import { HttpMethod } from '@/types'
-import { useEffect, useState } from 'react'
+import Layout from '@/components/app/Layout';
+import { HttpMethod } from '@/types';
+import { useEffect, useState } from 'react';
 
 interface TaskData {
-  readonly id: string | undefined
-  name: string
-  done: boolean
-  removed: boolean
+  readonly id: string | undefined;
+  name: string;
+  done: boolean;
+  removed: boolean;
 }
 
 export default function Tasks() {
-  const [tasks, setTasks] = useState<TaskData[]>([])
-  const [text, setText] = useState('')
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [tasks, setTasks] = useState<TaskData[]>([]);
+  const [text, setText] = useState('');
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     async function fetchTasks() {
-      const res = await fetch('/api/tasks')
+      const res = await fetch('/api/tasks');
 
       if (res.ok) {
-        const fetchedTasks = await res.json()
+        const fetchedTasks = await res.json();
 
-        setTasks(fetchedTasks)
-        setIsLoading(false)
+        setTasks(fetchedTasks);
+        setIsLoading(false);
 
-        return
+        return;
       }
-      console.error(res)
+      console.error(res);
     }
 
-    fetchTasks()
-  }, [])
+    fetchTasks();
+  }, []);
 
   const handleOnSubmit = async () => {
-    if (!text) return
+    if (!text) return;
 
     const newTask: TaskData = {
       id: undefined,
       name: text,
       done: false,
       removed: false,
-    }
+    };
 
     const res = await fetch(`/api/tasks`, {
       method: HttpMethod.POST,
@@ -48,58 +48,58 @@ export default function Tasks() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(newTask),
-    })
+    });
     if (res.ok) {
-      const createdTask = await res.json()
-      const newTasks = [createdTask, ...tasks]
-      setText('')
-      setTasks(newTasks)
+      const createdTask = await res.json();
+      const newTasks = [createdTask, ...tasks];
+      setText('');
+      setTasks(newTasks);
     } else {
-      console.error(`Error occured: ${JSON.stringify(res)}`)
+      console.error(`Error occured: ${JSON.stringify(res)}`);
     }
-  }
+  };
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setText(e.target.value)
-  }
+    setText(e.target.value);
+  };
 
   const handleOnCheck = async (task: TaskData) => {
-    const toUpdate = { ...task, done: !task.done }
+    const toUpdate = { ...task, done: !task.done };
     fetch(`/api/tasks/${task.id}/done`, {
       method: HttpMethod.PATCH,
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(toUpdate),
-    })
+    });
     const newTasks = tasks.map((t) => {
       if (t.id === task.id) {
-        return toUpdate
+        return toUpdate;
       }
-      return t
-    })
+      return t;
+    });
 
-    setTasks(newTasks)
-  }
+    setTasks(newTasks);
+  };
 
   const handleOnRemove = async (task: TaskData) => {
-    const toRemove = { ...task, removed: !task.removed }
+    const toRemove = { ...task, removed: !task.removed };
     fetch(`/api/tasks/${task.id}/removed`, {
       method: HttpMethod.PATCH,
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(toRemove),
-    })
+    });
     const newTasks = tasks.map((t) => {
       if (t.id === task.id) {
-        return toRemove
+        return toRemove;
       }
-      return t
-    })
+      return t;
+    });
 
-    setTasks(newTasks)
-  }
+    setTasks(newTasks);
+  };
 
   return (
     <Layout>
@@ -110,8 +110,8 @@ export default function Tasks() {
         <div className="my-10 grid gap-y-8">
           <form
             onSubmit={(e) => {
-              e.preventDefault()
-              handleOnSubmit()
+              e.preventDefault();
+              handleOnSubmit();
             }}
           >
             <input
@@ -171,5 +171,5 @@ export default function Tasks() {
         </div>
       </div>
     </Layout>
-  )
+  );
 }

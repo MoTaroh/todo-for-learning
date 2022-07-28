@@ -1,6 +1,6 @@
-import { NextApiRequest, NextApiResponse } from 'next'
-import { Session } from 'next-auth'
-import { FindTaskDtoType, FindTaskUseCase } from '../usecase/FindTaskUseCase'
+import { NextApiRequest, NextApiResponse } from 'next';
+import { Session } from 'next-auth';
+import { FindTaskDtoType, FindTaskUseCase } from '../usecase/FindTaskUseCase';
 
 export class FindTaskController {
   async findAllTasks(
@@ -9,15 +9,15 @@ export class FindTaskController {
     session: Session
   ): Promise<void | NextApiResponse<FindTaskDtoType[]>> {
     if (!session.user.id)
-      return res.status(500).end('Server failed to get session user ID')
-    const usecase = new FindTaskUseCase()
+      return res.status(500).end('Server failed to get session user ID');
+    const usecase = new FindTaskUseCase();
 
     try {
-      const tasks = await usecase.findAllTasks(session.user.id)
+      const tasks = await usecase.findAllTasks(session.user.id);
 
-      return res.status(200).json(tasks)
+      return res.status(200).json(tasks);
     } catch (error) {
-      return res.status(500).end(error)
+      return res.status(500).end(error);
     }
   }
 

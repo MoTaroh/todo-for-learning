@@ -1,20 +1,20 @@
-import { TaskId } from './TaskId'
-import { TaskName } from './TaskName'
+import { TaskId } from './TaskId';
+import { TaskName } from './TaskName';
 
 interface TaskType {
-  id: TaskId
-  name: TaskName
-  done: boolean
-  removed: boolean
-  userId: string
+  id: TaskId;
+  name: TaskName;
+  done: boolean;
+  removed: boolean;
+  userId: string;
 }
 
 export class Task implements TaskType {
-  id: TaskId
-  name: TaskName
-  done: boolean
-  removed: boolean
-  userId: string
+  id: TaskId;
+  name: TaskName;
+  done: boolean;
+  removed: boolean;
+  userId: string;
 
   private constructor(
     id: TaskId,
@@ -23,11 +23,11 @@ export class Task implements TaskType {
     removed: boolean,
     userId: string
   ) {
-    this.id = id
-    this.name = name
-    this.done = done
-    this.removed = removed
-    this.userId = userId
+    this.id = id;
+    this.name = name;
+    this.done = done;
+    this.removed = removed;
+    this.userId = userId;
   }
 
   // TODO: 値オブジェクトを導入する
@@ -38,13 +38,13 @@ export class Task implements TaskType {
    * @returns
    */
   static create(name: TaskName, userId: string) {
-    const id = new TaskId()
-    const taskName = name
-    const done = false
-    const removed = false
-    const uId = userId
+    const id = new TaskId();
+    const taskName = name;
+    const done = false;
+    const removed = false;
+    const uId = userId;
 
-    return new Task(id, taskName, done, removed, uId)
+    return new Task(id, taskName, done, removed, uId);
   }
 
   static reconstruct(taskRecord: TaskType): Task {
@@ -54,21 +54,21 @@ export class Task implements TaskType {
       taskRecord.done,
       taskRecord.removed,
       taskRecord.userId
-    )
+    );
   }
 
   doneTask() {
     // TODO: use Enum map?
-    this.done = true
+    this.done = true;
   }
   undoneTask() {
     // TODO: use Enum map?
-    this.done = false
+    this.done = false;
   }
   remove() {
-    this.removed = true
+    this.removed = true;
   }
   restore() {
-    this.removed = false
+    this.removed = false;
   }
 }

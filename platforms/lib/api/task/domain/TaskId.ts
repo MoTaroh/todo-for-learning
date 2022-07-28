@@ -1,4 +1,4 @@
-import cuid from "cuid";
+import cuid from 'cuid';
 
 export class TaskId {
   value: string;

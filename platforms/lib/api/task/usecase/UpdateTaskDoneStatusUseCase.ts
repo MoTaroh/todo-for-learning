@@ -1,5 +1,5 @@
-import { TaskId } from "../domain/TaskId";
-import { TaskRepository } from "../infrastructure/TaskRepository";
+import { TaskId } from '../domain/TaskId';
+import { TaskRepository } from '../infrastructure/TaskRepository';
 
 export class UpdateTaskDoneStatusUseCase {
   taskRepository: TaskRepository = new TaskRepository();
