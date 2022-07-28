@@ -101,6 +101,13 @@ export default function Tasks() {
     setTasks(newTasks);
   };
 
+  const removedTasks = tasks.filter((task) => {
+    return task.removed;
+  });
+  const notRemovedTasks = tasks.filter((task) => {
+    return !task.removed;
+  });
+
   return (
     <Layout>
       <div className="py-20 max-w-screen-xl mx-auto px-10 sm:px-20">
@@ -124,39 +131,102 @@ export default function Tasks() {
           </form>
           {!isLoading ? (
             tasks.length > 0 ? (
-              <ul className="flex flex-col space-y-2">
-                {tasks.map((task) => (
-                  <li
-                    key={task.id}
-                    className="flex items-center justify-between rounded group hover:bg-gray-100 h-16 px-3"
-                  >
-                    <div className="flex items-center  space-x-4">
-                      <input
-                        type="checkbox"
-                        name={task.name}
-                        id={task.id}
-                        disabled={task.removed}
-                        checked={task.done}
-                        onChange={() => handleOnCheck(task)}
-                        className="h-6 w-6 rounded text-lg text-black focus:border-black"
-                      />
-                      <label htmlFor={task.name} className="font-cal text-2xl">
-                        {task.name}
-                      </label>
-                    </div>
-                    <button
-                      onClick={() => handleOnRemove(task)}
-                      className={`${
-                        task.removed
-                          ? 'bg-green-500 hover:bg-green-600'
-                          : 'bg-red-500 hover:bg-red-600'
-                      } group-hover:block hidden  text-white px-4 py-2 rounded `}
-                    >
-                      {task.removed ? 'Restore' : 'Delete'}
-                    </button>
-                  </li>
-                ))}
-              </ul>
+              <div className="flex flex-col space-y-12">
+                <div>
+                  {notRemovedTasks.length > 0 ? (
+                    <ul className="flex flex-col space-y-2">
+                      {notRemovedTasks.map((task) => (
+                        <li
+                          key={task.id}
+                          className="flex items-center justify-between rounded group hover:bg-gray-100 h-16 px-3"
+                        >
+                          <div className="flex items-center  space-x-4">
+                            <input
+                              type="checkbox"
+                              name={task.name}
+                              id={task.id}
+                              disabled={task.removed}
+                              checked={task.done}
+                              onChange={() => handleOnCheck(task)}
+                              className="h-6 w-6 rounded text-lg text-black focus:border-black"
+                            />
+                            <label
+                              htmlFor={task.name}
+                              className="font-cal text-2xl"
+                            >
+                              {task.name}
+                            </label>
+                          </div>
+                          <button
+                            onClick={() => handleOnRemove(task)}
+                            className={`${
+                              task.removed
+                                ? 'bg-green-500 hover:bg-green-600'
+                                : 'bg-red-500 hover:bg-red-600'
+                            } group-hover:block hidden  text-white px-4 py-2 rounded `}
+                          >
+                            {task.removed ? 'Restore' : 'Delete'}
+                          </button>
+                        </li>
+                      ))}
+                      {removedTasks.length > 0 ? (
+                        <ul>
+                          {removedTasks.map((task) => {
+                            <li>{task.name}</li>;
+                          })}
+                        </ul>
+                      ) : (
+                        <></>
+                      )}
+                    </ul>
+                  ) : (
+                    <div>well done!</div>
+                  )}
+                </div>
+                <div>
+                  <h3 className="font-cal text-2xl mb-2">Trashes</h3>
+                  {removedTasks.length > 0 ? (
+                    <ul className="flex flex-col space-y-2">
+                      {removedTasks.map((task) => (
+                        <li
+                          key={task.id}
+                          className="flex items-center justify-between rounded group hover:bg-gray-100 h-16 px-3"
+                        >
+                          <div className="flex items-center  space-x-4">
+                            <input
+                              type="checkbox"
+                              name={task.name}
+                              id={task.id}
+                              disabled={task.removed}
+                              checked={task.done}
+                              onChange={() => handleOnCheck(task)}
+                              className="h-6 w-6 rounded text-lg text-black focus:border-black"
+                            />
+                            <label
+                              htmlFor={task.name}
+                              className="font-cal text-2xl"
+                            >
+                              {task.name}
+                            </label>
+                          </div>
+                          <button
+                            onClick={() => handleOnRemove(task)}
+                            className={`${
+                              task.removed
+                                ? 'bg-green-500 hover:bg-green-600'
+                                : 'bg-red-500 hover:bg-red-600'
+                            } group-hover:block hidden  text-white px-4 py-2 rounded `}
+                          >
+                            {task.removed ? 'Restore' : 'Delete'}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <div></div>
+                  )}
+                </div>
+              </div>
             ) : (
               <div>no tasks</div>
             )
