@@ -1,9 +1,9 @@
-import cuid from "cuid";
-import prisma from "@/lib/prisma";
+import cuid from 'cuid';
+import prisma from '@/lib/prisma';
 
-import type { NextApiRequest, NextApiResponse } from "next";
-import type { Site } from ".prisma/client";
-import type { Session } from "next-auth";
+import type { NextApiRequest, NextApiResponse } from 'next';
+import type { Site } from '.prisma/client';
+import type { Session } from 'next-auth';
 
 /**
  * Get Site
@@ -26,10 +26,10 @@ export async function getSite(
   if (Array.isArray(siteId))
     return res
       .status(400)
-      .end("Bad request. siteId parameter cannot be an array.");
+      .end('Bad request. siteId parameter cannot be an array.');
 
   if (!session.user.id)
-    return res.status(500).end("Server failed to get session user ID");
+    return res.status(500).end('Server failed to get session user ID');
 
   try {
     if (siteId) {
@@ -83,7 +83,7 @@ export async function createSite(
 }>> {
   const { name, subdomain, description, userId } = req.body;
 
-  const sub = subdomain.replace(/[^a-zA-Z0-9/-]+/g, "");
+  const sub = subdomain.replace(/[^a-zA-Z0-9/-]+/g, '');
 
   try {
     const response = await prisma.site.create({
@@ -91,10 +91,10 @@ export async function createSite(
         name: name,
         description: description,
         subdomain: sub.length > 0 ? sub : cuid(),
-        logo: "/logo.png",
+        logo: '/logo.png',
         image: `/placeholder.png`,
         imageBlurhash:
-          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAoJJREFUWEfFl4lu4zAMRO3cx/9/au6reMaOdkxTTl0grQFCRoqaT+SQotq2bV9N8rRt28xms87m83l553eZ/9vr9Wpkz+ezkT0ej+6dv1X81AFw7M4FBACPVn2c1Z3zLgDeJwHgeLFYdAARYioAEAKJEG2WAjl3gCwNYymQQ9b7/V4spmIAwO6Wy2VnAMikBWlDURBELf8CuN1uHQSrPwMAHK5WqwFELQ01AIXdAa7XawfAb3p6AOwK5+v1ugAoEq4FRSFLgavfQ49jAGQpAE5wjgGCeRrGdBArwHOPcwFcLpcGU1X0IsBuN5tNgYhaiFFwHTiAwq8I+O5xfj6fOz38K+X/fYAdb7fbAgFAjIJ6Aav3AYlQ6nfnDoDz0+lUxNiLALvf7XaDNGQ6GANQBKR85V27B4D3QQRw7hGIYlQKWGM79hSweyCUe1blXhEAogfABwHAXAcqSYkxCtHLUK3XBajSc4Dj8dilAeiSAgD2+30BAEKV4GKcAuDqB4TdYwBgPQByCgApUBoE4EJUGvxUjF3Q69/zLw3g/HA45ABKgdIQu+JPIyDnisCfAxAFNFM0EFNQ64gfS0EUoQP8ighrZSjn3oziZEQpauyKbfjbZchHUL/3AS/Dd30gAkxuRACgfO+EWQW8qwI1o+wseNuKcQiESjALvwNoMI0TcRzD4lFcPYwIM+JTF5x6HOs8yI7jeB5oKhpMRFH9UwaSCDB2Jmg4rc6E2TT0biIaG0rQhNqyhpHBcayTTSXH6vcDL7/sdqRK8LkwTsU499E8vRcAojHcZ4AxABdilgrp4lsXk8oVqgwh7+6H3phqd8J0Kk4vbx/+sZqCD/vNLya/5dT9fAH8g1WdNGgwbQAAAABJRU5ErkJggg==",
+          'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAoJJREFUWEfFl4lu4zAMRO3cx/9/au6reMaOdkxTTl0grQFCRoqaT+SQotq2bV9N8rRt28xms87m83l553eZ/9vr9Wpkz+ezkT0ej+6dv1X81AFw7M4FBACPVn2c1Z3zLgDeJwHgeLFYdAARYioAEAKJEG2WAjl3gCwNYymQQ9b7/V4spmIAwO6Wy2VnAMikBWlDURBELf8CuN1uHQSrPwMAHK5WqwFELQ01AIXdAa7XawfAb3p6AOwK5+v1ugAoEq4FRSFLgavfQ49jAGQpAE5wjgGCeRrGdBArwHOPcwFcLpcGU1X0IsBuN5tNgYhaiFFwHTiAwq8I+O5xfj6fOz38K+X/fYAdb7fbAgFAjIJ6Aav3AYlQ6nfnDoDz0+lUxNiLALvf7XaDNGQ6GANQBKR85V27B4D3QQRw7hGIYlQKWGM79hSweyCUe1blXhEAogfABwHAXAcqSYkxCtHLUK3XBajSc4Dj8dilAeiSAgD2+30BAEKV4GKcAuDqB4TdYwBgPQByCgApUBoE4EJUGvxUjF3Q69/zLw3g/HA45ABKgdIQu+JPIyDnisCfAxAFNFM0EFNQ64gfS0EUoQP8ighrZSjn3oziZEQpauyKbfjbZchHUL/3AS/Dd30gAkxuRACgfO+EWQW8qwI1o+wseNuKcQiESjALvwNoMI0TcRzD4lFcPYwIM+JTF5x6HOs8yI7jeB5oKhpMRFH9UwaSCDB2Jmg4rc6E2TT0biIaG0rQhNqyhpHBcayTTSXH6vcDL7/sdqRK8LkwTsU499E8vRcAojHcZ4AxABdilgrp4lsXk8oVqgwh7+6H3phqd8J0Kk4vbx/+sZqCD/vNLya/5dT9fAH8g1WdNGgwbQAAAABJRU5ErkJggg==',
         user: {
           connect: {
             id: userId,
@@ -130,7 +130,7 @@ export async function deleteSite(
   if (Array.isArray(siteId))
     return res
       .status(400)
-      .end("Bad request. siteId parameter cannot be an array.");
+      .end('Bad request. siteId parameter cannot be an array.');
 
   try {
     await prisma.$transaction([
@@ -177,7 +177,7 @@ export async function updateSite(
   const { id, currentSubdomain, name, description, image, imageBlurhash } =
     req.body;
 
-  const sub = req.body.subdomain.replace(/[^a-zA-Z0-9/-]+/g, "");
+  const sub = req.body.subdomain.replace(/[^a-zA-Z0-9/-]+/g, '');
   const subdomain = sub.length > 0 ? sub : currentSubdomain;
 
   try {

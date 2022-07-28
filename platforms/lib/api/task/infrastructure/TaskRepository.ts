@@ -1,8 +1,9 @@
-import prisma from "@/lib/prisma";
-import { Task as TaskType } from "@prisma/client";
-import { Task } from "../domain/Task";
-import { TaskId } from "../domain/TaskId";
-import { ITaskRepository } from "../domain/TaskRepository";
+import prisma from '@/lib/prisma';
+import { Task as TaskDBType } from '@prisma/client';
+import { Task } from '../domain/Task';
+import { TaskId } from '../domain/TaskId';
+import { TaskName } from '../domain/TaskName';
+import { ITaskRepository } from '../domain/TaskRepository';
 
 export class TaskRepository implements ITaskRepository {
   async findAll(userId: string): Promise<Task[]> {
@@ -11,7 +12,7 @@ export class TaskRepository implements ITaskRepository {
         userId: userId,
       },
       orderBy: {
-        createdAt: "desc",
+        createdAt: 'desc',
       },
     });
 
@@ -29,18 +30,18 @@ export class TaskRepository implements ITaskRepository {
   }
 
   async create(task: Task): Promise<Task> {
-    const { id, ...partial } = task;
+    const { id, name, ...partial } = task;
     const taskRecord = await prisma.task.create({
-      data: { id: id.value, ...partial },
+      data: { id: id.value, name: name.value, ...partial },
     });
 
     return mapRecordToEntity(taskRecord);
   }
 
   async update(task: Task): Promise<Task> {
-    const { id, ...partial } = task;
+    const { id, name, ...partial } = task;
     const taskRecord = await prisma.task.update({
-      data: { id: id.value, ...partial },
+      data: { id: id.value, name: name.value, ...partial },
       where: { id: id.value },
     });
 
@@ -53,11 +54,11 @@ export class TaskRepository implements ITaskRepository {
  * @param taskRecord
  * @returns
  */
-function mapRecordToEntity(taskRecord: TaskType): Task {
+function mapRecordToEntity(taskRecord: TaskDBType): Task {
   const { id, name, done, removed, userId } = taskRecord;
   const record = {
     id: new TaskId(id),
-    name: name,
+    name: new TaskName(name),
     done: done,
     removed: removed,
     userId: userId,

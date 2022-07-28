@@ -1,5 +1,5 @@
-import { Task } from "./Task";
-import { TaskId } from "./TaskId";
+import { Task } from './Task';
+import { TaskId } from './TaskId';
 
 export interface ITaskRepository {
   findAll: (userId: string) => Promise<Task[]>;

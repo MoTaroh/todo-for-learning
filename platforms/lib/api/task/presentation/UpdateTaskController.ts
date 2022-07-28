@@ -1,6 +1,6 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { UpdateTaskDoneStatusUseCase } from "../usecase/UpdateTaskDoneStatusUseCase";
-import { UpdateTaskRemovedStatusUseCase } from "../usecase/updateTaskRemovedStatusUseCase";
+import { NextApiRequest, NextApiResponse } from 'next';
+import { UpdateTaskDoneStatusUseCase } from '../usecase/UpdateTaskDoneStatusUseCase';
+import { UpdateTaskRemovedStatusUseCase } from '../usecase/UpdateTaskRemovedStatusUseCase';
 
 export class UpdateTaskController {
   async updateDoneStatus(req: NextApiRequest, res: NextApiResponse) {
@@ -9,7 +9,7 @@ export class UpdateTaskController {
     const { done } = req.body;
 
     if (Array.isArray(taskId) || !taskId)
-      return res.status(400).end("Bad request. taskId parameter is invalid.");
+      return res.status(400).end('Bad request. taskId parameter is invalid.');
 
     switch (done) {
       case true:
@@ -29,7 +29,7 @@ export class UpdateTaskController {
           return res.status(500).end(error);
         }
       default:
-        return res.status(500).end("Invalid request");
+        return res.status(500).end('Invalid request');
     }
   }
 
@@ -39,7 +39,7 @@ export class UpdateTaskController {
     const { removed } = req.body;
 
     if (Array.isArray(taskId) || !taskId)
-      return res.status(400).end("Bad request. taskId parameter is invalid.");
+      return res.status(400).end('Bad request. taskId parameter is invalid.');
 
     switch (removed) {
       case true:
@@ -59,7 +59,7 @@ export class UpdateTaskController {
           return res.status(500).end(error);
         }
       default:
-        return res.status(500).end("Invalid request");
+        return res.status(500).end('Invalid request');
     }
   }
 }

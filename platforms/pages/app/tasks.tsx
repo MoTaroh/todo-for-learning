@@ -1,6 +1,6 @@
-import Layout from "@/components/app/Layout";
-import { HttpMethod } from "@/types";
-import { useEffect, useState } from "react";
+import Layout from '@/components/app/Layout';
+import { HttpMethod } from '@/types';
+import { useEffect, useState } from 'react';
 
 interface TaskData {
   readonly id: string | undefined;
@@ -11,16 +11,16 @@ interface TaskData {
 
 export default function Tasks() {
   const [tasks, setTasks] = useState<TaskData[]>([]);
-  const [text, setText] = useState("");
+  const [text, setText] = useState('');
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     async function fetchTasks() {
-      const res = await fetch("/api/tasks");
-      console.log(res);
+      const res = await fetch('/api/tasks');
 
       if (res.ok) {
         const fetchedTasks = await res.json();
+
         setTasks(fetchedTasks);
         setIsLoading(false);
 
@@ -45,14 +45,14 @@ export default function Tasks() {
     const res = await fetch(`/api/tasks`, {
       method: HttpMethod.POST,
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(newTask),
     });
     if (res.ok) {
       const createdTask = await res.json();
       const newTasks = [createdTask, ...tasks];
-      setText("");
+      setText('');
       setTasks(newTasks);
     } else {
       console.error(`Error occured: ${JSON.stringify(res)}`);
@@ -68,7 +68,7 @@ export default function Tasks() {
     fetch(`/api/tasks/${task.id}/done`, {
       method: HttpMethod.PATCH,
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(toUpdate),
     });
@@ -87,7 +87,7 @@ export default function Tasks() {
     fetch(`/api/tasks/${task.id}/removed`, {
       method: HttpMethod.PATCH,
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(toRemove),
     });
@@ -148,11 +148,11 @@ export default function Tasks() {
                       onClick={() => handleOnRemove(task)}
                       className={`${
                         task.removed
-                          ? "bg-green-500 hover:bg-green-600"
-                          : "bg-red-500 hover:bg-red-600"
+                          ? 'bg-green-500 hover:bg-green-600'
+                          : 'bg-red-500 hover:bg-red-600'
                       } group-hover:block hidden  text-white px-4 py-2 rounded `}
                     >
-                      {task.removed ? "Restore" : "Delete"}
+                      {task.removed ? 'Restore' : 'Delete'}
                     </button>
                   </li>
                 ))}

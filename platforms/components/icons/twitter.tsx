@@ -1,8 +1,8 @@
-import type { BaseIconProps } from "@/types";
+import type { BaseIconProps } from '@/types';
 
-interface TwitterIconProps extends BaseIconProps {}
+type TwitterIconProps = BaseIconProps;
 
-const TwitterIcon = ({ className, color, height, width }: TwitterIconProps) => {
+const TwitterIcon = ({ className, height, width }: TwitterIconProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

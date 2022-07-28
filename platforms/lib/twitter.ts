@@ -1,18 +1,18 @@
-import { stringify as queryStringify } from "querystring";
+import { stringify as queryStringify } from 'querystring';
 
-import { getTwitterMedia } from "./twitter-media";
+import { getTwitterMedia } from './twitter-media';
 
-import type { Tweet, TweetData } from "@/types";
+import type { Tweet, TweetData } from '@/types';
 
 const queryParams = queryStringify({
   expansions:
-    "author_id,attachments.media_keys,referenced_tweets.id,referenced_tweets.id.author_id,attachments.poll_ids",
-  "tweet.fields":
-    "attachments,author_id,public_metrics,created_at,id,in_reply_to_user_id,referenced_tweets,text,entities",
-  "user.fields": "id,name,profile_image_url,protected,url,username,verified",
-  "media.fields":
-    "duration_ms,height,media_key,preview_image_url,type,url,width,public_metrics",
-  "poll.fields": "duration_minutes,end_datetime,id,options,voting_status",
+    'author_id,attachments.media_keys,referenced_tweets.id,referenced_tweets.id.author_id,attachments.poll_ids',
+  'tweet.fields':
+    'attachments,author_id,public_metrics,created_at,id,in_reply_to_user_id,referenced_tweets,text,entities',
+  'user.fields': 'id,name,profile_image_url,protected,url,username,verified',
+  'media.fields':
+    'duration_ms,height,media_key,preview_image_url,type,url,width,public_metrics',
+  'poll.fields': 'duration_minutes,end_datetime,id,options,voting_status',
 });
 
 export const getTweets = async (id: string) => {
@@ -48,20 +48,21 @@ export const getTweets = async (id: string) => {
 
     // Function to distinguish between external URLs and external t.co links and internal t.co links
     // (e.g. images, videos, gifs, quote tweets) and remove/replace them accordingly
+    // eslint-disable-next-line no-inner-declarations
     function getExternalUrls(tweet: TweetData) {
       const externalURLs = tweet?.entities?.urls;
 
-      let mappings: {
+      const mappings: {
         [I in string]: string;
       } = {};
 
       if (externalURLs)
         externalURLs.map((url) => {
           mappings[url.url] =
-            !url.display_url.startsWith("pic.twitter.com") &&
-            !url.display_url.startsWith("twitter.com")
+            !url.display_url.startsWith('pic.twitter.com') &&
+            !url.display_url.startsWith('twitter.com')
               ? url.expanded_url
-              : "";
+              : '';
         });
 
       let processedText = tweet?.text;
@@ -97,7 +98,7 @@ export const getTweets = async (id: string) => {
       video:
         media &&
         media[0] &&
-        (media[0].type === "video" || media[0].type === "animated_gif")
+        (media[0].type === 'video' || media[0].type === 'animated_gif')
           ? await getTwitterMedia(id)
           : null,
     };

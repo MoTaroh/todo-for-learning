@@ -1,6 +1,6 @@
-import type { BaseIconProps } from "@/types";
+import type { BaseIconProps } from '@/types';
 
-interface PlusIconProps extends BaseIconProps {}
+type PlusIconProps = BaseIconProps;
 
 const PlusIcon = ({ color, width, height, className }: PlusIconProps) => {
   return (

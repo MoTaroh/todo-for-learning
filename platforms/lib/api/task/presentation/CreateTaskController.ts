@@ -1,7 +1,7 @@
-import { Task } from "@prisma/client";
-import { NextApiRequest, NextApiResponse } from "next";
-import { Session } from "next-auth";
-import { CreateTaskUseCase } from "../usecase/CreateTaskUseCase";
+import { Task } from '@prisma/client';
+import { NextApiRequest, NextApiResponse } from 'next';
+import { Session } from 'next-auth';
+import { CreateTaskUseCase } from '../usecase/CreateTaskUseCase';
 
 export class CreateTaskController {
   async createTask(
@@ -10,7 +10,7 @@ export class CreateTaskController {
     session: Session
   ): Promise<void | NextApiResponse<Task>> {
     if (!session.user.id)
-      return res.status(500).end("Server failed to get session user ID");
+      return res.status(500).end('Server failed to get session user ID');
     const { name } = req.body;
     const usecase = new CreateTaskUseCase();
 

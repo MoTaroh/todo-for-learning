@@ -1,11 +1,11 @@
-import prisma from "@/lib/prisma";
+import prisma from '@/lib/prisma';
 
-import type { NextApiRequest, NextApiResponse } from "next";
-import type { Post, Site } from ".prisma/client";
-import type { Session } from "next-auth";
-import { revalidate } from "@/lib/revalidate";
+import type { NextApiRequest, NextApiResponse } from 'next';
+import type { Post, Site } from '.prisma/client';
+import type { Session } from 'next-auth';
+import { revalidate } from '@/lib/revalidate';
 
-import type { WithSitePost } from "@/types";
+import type { WithSitePost } from '@/types';
 
 interface AllPosts {
   posts: Array<Post>;
@@ -34,10 +34,10 @@ export async function getPost(
     Array.isArray(siteId) ||
     Array.isArray(published)
   )
-    return res.status(400).end("Bad request. Query parameters are not valid.");
+    return res.status(400).end('Bad request. Query parameters are not valid.');
 
   if (!session.user.id)
-    return res.status(500).end("Server failed to get session user ID");
+    return res.status(500).end('Server failed to get session user ID');
 
   try {
     if (postId) {
@@ -74,10 +74,10 @@ export async function getPost(
             site: {
               id: siteId,
             },
-            published: JSON.parse(published || "true"),
+            published: JSON.parse(published || 'true'),
           },
           orderBy: {
-            createdAt: "desc",
+            createdAt: 'desc',
           },
         });
 
@@ -112,14 +112,14 @@ export async function createPost(
   if (Array.isArray(siteId))
     return res
       .status(400)
-      .end("Bad request. siteId parameter cannot be an array.");
+      .end('Bad request. siteId parameter cannot be an array.');
 
   try {
     const response = await prisma.post.create({
       data: {
         image: `/placeholder.png`,
         imageBlurhash:
-          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAoJJREFUWEfFl4lu4zAMRO3cx/9/au6reMaOdkxTTl0grQFCRoqaT+SQotq2bV9N8rRt28xms87m83l553eZ/9vr9Wpkz+ezkT0ej+6dv1X81AFw7M4FBACPVn2c1Z3zLgDeJwHgeLFYdAARYioAEAKJEG2WAjl3gCwNYymQQ9b7/V4spmIAwO6Wy2VnAMikBWlDURBELf8CuN1uHQSrPwMAHK5WqwFELQ01AIXdAa7XawfAb3p6AOwK5+v1ugAoEq4FRSFLgavfQ49jAGQpAE5wjgGCeRrGdBArwHOPcwFcLpcGU1X0IsBuN5tNgYhaiFFwHTiAwq8I+O5xfj6fOz38K+X/fYAdb7fbAgFAjIJ6Aav3AYlQ6nfnDoDz0+lUxNiLALvf7XaDNGQ6GANQBKR85V27B4D3QQRw7hGIYlQKWGM79hSweyCUe1blXhEAogfABwHAXAcqSYkxCtHLUK3XBajSc4Dj8dilAeiSAgD2+30BAEKV4GKcAuDqB4TdYwBgPQByCgApUBoE4EJUGvxUjF3Q69/zLw3g/HA45ABKgdIQu+JPIyDnisCfAxAFNFM0EFNQ64gfS0EUoQP8ighrZSjn3oziZEQpauyKbfjbZchHUL/3AS/Dd30gAkxuRACgfO+EWQW8qwI1o+wseNuKcQiESjALvwNoMI0TcRzD4lFcPYwIM+JTF5x6HOs8yI7jeB5oKhpMRFH9UwaSCDB2Jmg4rc6E2TT0biIaG0rQhNqyhpHBcayTTSXH6vcDL7/sdqRK8LkwTsU499E8vRcAojHcZ4AxABdilgrp4lsXk8oVqgwh7+6H3phqd8J0Kk4vbx/+sZqCD/vNLya/5dT9fAH8g1WdNGgwbQAAAABJRU5ErkJggg==",
+          'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAoJJREFUWEfFl4lu4zAMRO3cx/9/au6reMaOdkxTTl0grQFCRoqaT+SQotq2bV9N8rRt28xms87m83l553eZ/9vr9Wpkz+ezkT0ej+6dv1X81AFw7M4FBACPVn2c1Z3zLgDeJwHgeLFYdAARYioAEAKJEG2WAjl3gCwNYymQQ9b7/V4spmIAwO6Wy2VnAMikBWlDURBELf8CuN1uHQSrPwMAHK5WqwFELQ01AIXdAa7XawfAb3p6AOwK5+v1ugAoEq4FRSFLgavfQ49jAGQpAE5wjgGCeRrGdBArwHOPcwFcLpcGU1X0IsBuN5tNgYhaiFFwHTiAwq8I+O5xfj6fOz38K+X/fYAdb7fbAgFAjIJ6Aav3AYlQ6nfnDoDz0+lUxNiLALvf7XaDNGQ6GANQBKR85V27B4D3QQRw7hGIYlQKWGM79hSweyCUe1blXhEAogfABwHAXAcqSYkxCtHLUK3XBajSc4Dj8dilAeiSAgD2+30BAEKV4GKcAuDqB4TdYwBgPQByCgApUBoE4EJUGvxUjF3Q69/zLw3g/HA45ABKgdIQu+JPIyDnisCfAxAFNFM0EFNQ64gfS0EUoQP8ighrZSjn3oziZEQpauyKbfjbZchHUL/3AS/Dd30gAkxuRACgfO+EWQW8qwI1o+wseNuKcQiESjALvwNoMI0TcRzD4lFcPYwIM+JTF5x6HOs8yI7jeB5oKhpMRFH9UwaSCDB2Jmg4rc6E2TT0biIaG0rQhNqyhpHBcayTTSXH6vcDL7/sdqRK8LkwTsU499E8vRcAojHcZ4AxABdilgrp4lsXk8oVqgwh7+6H3phqd8J0Kk4vbx/+sZqCD/vNLya/5dT9fAH8g1WdNGgwbQAAAABJRU5ErkJggg==',
         site: {
           connect: {
             id: siteId,
@@ -155,7 +155,7 @@ export async function deletePost(
   if (Array.isArray(postId))
     return res
       .status(400)
-      .end("Bad request. postId parameter cannot be an array.");
+      .end('Bad request. postId parameter cannot be an array.');
 
   try {
     const response = await prisma.post.delete({

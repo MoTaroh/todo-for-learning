@@ -1,0 +1,22 @@
+{
+  "name": "todo-for-learning",
+  "version": "1.0.0",
+  "description": "This is a repository of ToDo management application to enhance my design &amp; engineering skills.",
+  "main": "index.js",
+  "scripts": {
+    "prepare": "husky install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MoTaroh/todo-for-learning.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MoTaroh/todo-for-learning/issues"
+  },
+  "homepage": "https://github.com/MoTaroh/todo-for-learning#readme",
+  "devDependencies": {
+    "husky": "^8.0.1"
+  }
+}
