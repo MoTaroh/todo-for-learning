@@ -1,6 +1,6 @@
-import type { BaseIconProps } from "@/types";
+import type { BaseIconProps } from '@/types';
 
-interface NotFoundIconProps extends BaseIconProps {}
+type NotFoundIconProps = BaseIconProps;
 
 const NotFoundIcon = ({
   className,
