@@ -1,6 +1,6 @@
-import type { BaseIconProps } from "@/types";
+import type { BaseIconProps } from '@/types';
 
-interface XIconProps extends BaseIconProps {}
+type XIconProps = BaseIconProps;
 
 const XIcon = ({ className, color, height, width }: XIconProps) => {
   return (
