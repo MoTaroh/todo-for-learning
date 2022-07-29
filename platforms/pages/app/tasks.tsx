@@ -138,9 +138,9 @@ export default function Tasks() {
                       {notRemovedTasks.map((task) => (
                         <li
                           key={task.id}
-                          className="flex items-center justify-between rounded group hover:bg-gray-100 h-16 px-3"
+                          className="flex items-center space-x-4 justify-between rounded group hover:bg-gray-100 h-16 px-3"
                         >
-                          <div className="flex items-center  space-x-4">
+                          <div className="flex flex-1 items-center space-x-4">
                             <input
                               type="checkbox"
                               name={task.name}
@@ -150,12 +150,10 @@ export default function Tasks() {
                               onChange={() => handleOnCheck(task)}
                               className="h-6 w-6 rounded text-lg text-black focus:border-black"
                             />
-                            <label
-                              htmlFor={task.name}
-                              className="font-cal text-2xl"
-                            >
-                              {task.name}
-                            </label>
+                            <input
+                              value={task.name}
+                              className="w-full font-cal text-2xl group-hover:bg-gray-100"
+                            />
                           </div>
                           <button
                             onClick={() => handleOnRemove(task)}
