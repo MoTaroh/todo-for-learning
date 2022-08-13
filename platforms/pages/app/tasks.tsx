@@ -130,11 +130,9 @@ export default function Tasks() {
 
   return (
     <Layout>
-      <div className="max-w-screen-xl px-10 py-20 mx-auto sm:px-20">
-        <div className="flex">
-          <h1 className="text-5xl font-cal">My Tasks</h1>
-        </div>
-        <div className="grid my-10 gap-y-8">
+      <div className="flex flex-col h-full max-w-screen-xl p-10 mx-auto sm:px-20">
+        <h1 className="text-2xl font-bold">My Tasks</h1>
+        <div className="flex flex-col h-full mt-6">
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -144,8 +142,8 @@ export default function Tasks() {
             <input
               type="text"
               value={text}
-              placeholder="Add new task"
-              className="w-full rounded appearance-none focus:outline-none focus:ring-black focus:border-black "
+              placeholder="Press “Enter” to add a new task..."
+              className="w-full mb-6 rounded appearance-none focus:outline-none focus:ring-black focus:border-black "
               onChange={(e) => handleOnChange(e)}
             />
           </form>
@@ -164,57 +162,23 @@ export default function Tasks() {
                           handleOnUpdate={handleOnUpdate}
                         ></TaskItem>
                       ))}
-                      {removedTasks.length > 0 ? (
-                        <ul>
-                          {removedTasks.map((task) => {
-                            <li>{task.name}</li>;
-                          })}
-                        </ul>
-                      ) : (
-                        <></>
-                      )}
                     </ul>
                   ) : (
                     <div>well done!</div>
                   )}
                 </div>
                 <div>
-                  <h3 className="mb-2 text-2xl font-cal">Trashes</h3>
+                  <h3 className="mb-3 text-xl font-bold">Trashes</h3>
                   {removedTasks.length > 0 ? (
                     <ul className="flex flex-col space-y-2">
                       {removedTasks.map((task) => (
-                        <li
+                        <TaskItem
                           key={task.id}
-                          className="flex items-center justify-between h-16 px-3 rounded group hover:bg-gray-100"
-                        >
-                          <div className="flex items-center space-x-4">
-                            <input
-                              type="checkbox"
-                              name={task.name}
-                              id={task.id}
-                              disabled={task.removed}
-                              checked={task.done}
-                              onChange={() => handleOnCheck(task)}
-                              className="w-6 h-6 text-lg text-black rounded focus:border-black"
-                            />
-                            <label
-                              htmlFor={task.name}
-                              className="text-2xl font-cal"
-                            >
-                              {task.name}
-                            </label>
-                          </div>
-                          <button
-                            onClick={() => handleOnRemove(task)}
-                            className={`${
-                              task.removed
-                                ? 'bg-green-500 hover:bg-green-600'
-                                : 'bg-red-500 hover:bg-red-600'
-                            } group-hover:block hidden  text-white px-4 py-2 rounded `}
-                          >
-                            {task.removed ? 'Restore' : 'Delete'}
-                          </button>
-                        </li>
+                          task={task}
+                          handleOnCheck={handleOnCheck}
+                          handleOnRemove={handleOnRemove}
+                          handleOnUpdate={handleOnUpdate}
+                        ></TaskItem>
                       ))}
                     </ul>
                   ) : (
@@ -223,7 +187,7 @@ export default function Tasks() {
                 </div>
               </div>
             ) : (
-              <div>no tasks</div>
+              <div className="flex-1 w-full mt-6 bg-center bg-no-repeat bg-contain rounded bg-gray-50 bg-blank-task"></div>
             )
           ) : (
             [0, 1, 2, 3, 4].map((i) => (
