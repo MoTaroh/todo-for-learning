@@ -191,7 +191,7 @@ export default function Tasks() {
             )
           ) : (
             [0, 1, 2, 3, 4].map((i) => (
-              <div key={i} className="flex items-center space-x-4">
+              <div key={i} className="flex items-center mb-4 space-x-4">
                 <div className="w-10 h-10 bg-gray-300 rounded animate-pulse" />
                 <div className="w-full h-10 bg-gray-300 rounded animate-pulse" />
               </div>
