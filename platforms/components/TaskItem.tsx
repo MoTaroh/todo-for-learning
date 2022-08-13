@@ -1,4 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import {
+  TrashIcon,
+  PencilIcon,
+  CheckIcon,
+  ReplyIcon,
+} from '@heroicons/react/outline';
 
 interface TaskData {
   readonly id: string | undefined;
@@ -22,13 +28,20 @@ export default function TaskItem({
   const [editable, setEditable] = useState(false);
   const handleEditable = () => setEditable(!editable);
 
+  useEffect(() => {
+    if (editable === true) {
+      const input = document.getElementById('task-input');
+      input?.focus();
+    }
+  }, [editable]);
+
   const [text, setText] = useState(task.name);
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setText(e.target.value);
   };
 
   return (
-    <div className="flex items-center justify-between h-12 p-3 rounded appearance-none group hover:bg-gray-100 focus-within:outline-none focus-within:border-gray-900 focus-within:ring-gray-900">
+    <div className="flex items-center justify-between h-12 p-3 space-x-3 rounded appearance-none group hover:bg-gray-100 focus-within:outline-none focus-within:border-gray-900 focus-within:ring-gray-900">
       <div className="flex items-center flex-1 space-x-3">
         <input
           type="checkbox"
@@ -46,13 +59,16 @@ export default function TaskItem({
               handleOnUpdate(task, text);
               handleEditable();
             }}
+            className="flex-1"
           >
             <input
+              id="task-input"
               type="text"
               value={text}
-              placeholder="Add new task"
+              placeholder="Press “Enter” to add a new task..."
               onChange={(e) => handleOnChange(e)}
-              className="text-lg font-medium focus:outline-none group-hover:bg-gray-100 "
+              onBlur={handleEditable}
+              className="w-full h-8 text-lg font-medium border-0 rounded appearance-none focus:outline-none focus:ring-gray-900"
             />
           </form>
         ) : (
@@ -62,7 +78,11 @@ export default function TaskItem({
           onClick={handleEditable}
           className="items-center justify-center hidden w-8 h-8 text-gray-900 rounded group-hover:flex hover:bg-gray-200"
         >
-          {editable ? 'C' : 'E'}
+          {editable ? (
+            <CheckIcon className="w-6 h-6" />
+          ) : (
+            <PencilIcon className="w-6 h-6" />
+          )}
         </button>
       </div>
       <button
@@ -71,9 +91,13 @@ export default function TaskItem({
           task.removed
             ? 'bg-green-300 hover:bg-green-200 text-green-600'
             : 'bg-red-300 hover:bg-red-200 text-red-600'
-        } group-hover:block hidden h-8 w-8 rounded `}
+        } group-hover:flex items-center justify-center hidden h-8 w-8 rounded `}
       >
-        {task.removed ? 'R' : 'D'}
+        {task.removed ? (
+          <ReplyIcon className="w-6 h-6" />
+        ) : (
+          <TrashIcon className="w-6 h-6" />
+        )}
       </button>
     </div>
   );
