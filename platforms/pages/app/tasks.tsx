@@ -1,4 +1,5 @@
 import Layout from '@/components/app/Layout';
+import TaskItem from '@/components/TaskItem';
 import { HttpMethod } from '@/types';
 import { useEffect, useState } from 'react';
 
@@ -110,11 +111,11 @@ export default function Tasks() {
 
   return (
     <Layout>
-      <div className="py-20 max-w-screen-xl mx-auto px-10 sm:px-20">
+      <div className="max-w-screen-xl px-10 py-20 mx-auto sm:px-20">
         <div className="flex">
-          <h1 className="font-cal text-5xl">My Tasks</h1>
+          <h1 className="text-5xl font-cal">My Tasks</h1>
         </div>
-        <div className="my-10 grid gap-y-8">
+        <div className="grid my-10 gap-y-8">
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -125,7 +126,7 @@ export default function Tasks() {
               type="text"
               value={text}
               placeholder="Add new task"
-              className="w-full rounded focus:ring-black"
+              className="w-full rounded appearance-none focus:outline-none focus:ring-black focus:border-black "
               onChange={(e) => handleOnChange(e)}
             />
           </form>
@@ -136,36 +137,12 @@ export default function Tasks() {
                   {notRemovedTasks.length > 0 ? (
                     <ul className="flex flex-col space-y-2">
                       {notRemovedTasks.map((task) => (
-                        <li
+                        <TaskItem
                           key={task.id}
-                          className="flex items-center space-x-4 justify-between rounded group hover:bg-gray-100 h-16 px-3"
-                        >
-                          <div className="flex flex-1 items-center space-x-4">
-                            <input
-                              type="checkbox"
-                              name={task.name}
-                              id={task.id}
-                              disabled={task.removed}
-                              checked={task.done}
-                              onChange={() => handleOnCheck(task)}
-                              className="h-6 w-6 rounded text-lg text-black focus:border-black"
-                            />
-                            <input
-                              value={task.name}
-                              className="w-full font-cal text-2xl group-hover:bg-gray-100"
-                            />
-                          </div>
-                          <button
-                            onClick={() => handleOnRemove(task)}
-                            className={`${
-                              task.removed
-                                ? 'bg-green-500 hover:bg-green-600'
-                                : 'bg-red-500 hover:bg-red-600'
-                            } group-hover:block hidden  text-white px-4 py-2 rounded `}
-                          >
-                            {task.removed ? 'Restore' : 'Delete'}
-                          </button>
-                        </li>
+                          task={task}
+                          handleOnCheck={handleOnCheck}
+                          handleOnRemove={handleOnRemove}
+                        ></TaskItem>
                       ))}
                       {removedTasks.length > 0 ? (
                         <ul>
@@ -182,15 +159,15 @@ export default function Tasks() {
                   )}
                 </div>
                 <div>
-                  <h3 className="font-cal text-2xl mb-2">Trashes</h3>
+                  <h3 className="mb-2 text-2xl font-cal">Trashes</h3>
                   {removedTasks.length > 0 ? (
                     <ul className="flex flex-col space-y-2">
                       {removedTasks.map((task) => (
                         <li
                           key={task.id}
-                          className="flex items-center justify-between rounded group hover:bg-gray-100 h-16 px-3"
+                          className="flex items-center justify-between h-16 px-3 rounded group hover:bg-gray-100"
                         >
-                          <div className="flex items-center  space-x-4">
+                          <div className="flex items-center space-x-4">
                             <input
                               type="checkbox"
                               name={task.name}
@@ -198,11 +175,11 @@ export default function Tasks() {
                               disabled={task.removed}
                               checked={task.done}
                               onChange={() => handleOnCheck(task)}
-                              className="h-6 w-6 rounded text-lg text-black focus:border-black"
+                              className="w-6 h-6 text-lg text-black rounded focus:border-black"
                             />
                             <label
                               htmlFor={task.name}
-                              className="font-cal text-2xl"
+                              className="text-2xl font-cal"
                             >
                               {task.name}
                             </label>
@@ -230,9 +207,9 @@ export default function Tasks() {
             )
           ) : (
             [0, 1, 2, 3, 4].map((i) => (
-              <div key={i} className="flex space-x-4 items-center">
-                <div className="w-10 h-10 rounded bg-gray-300 animate-pulse" />
-                <div className="w-full h-10 rounded bg-gray-300 animate-pulse" />
+              <div key={i} className="flex items-center space-x-4">
+                <div className="w-10 h-10 bg-gray-300 rounded animate-pulse" />
+                <div className="w-full h-10 bg-gray-300 rounded animate-pulse" />
               </div>
             ))
           )}
