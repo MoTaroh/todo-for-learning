@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 interface TaskData {
   readonly id: string | undefined;
@@ -10,18 +10,25 @@ interface Props {
   task: TaskData;
   handleOnCheck: (task: TaskData) => Promise<void>;
   handleOnRemove: (task: TaskData) => Promise<void>;
+  handleOnUpdate: (task: TaskData, text: string) => Promise<void>;
 }
 
 export default function TaskItem({
   task,
   handleOnCheck,
   handleOnRemove,
+  handleOnUpdate,
 }: Props) {
   const [editable, setEditable] = useState(false);
   const handleEditable = () => setEditable(!editable);
 
+  const [text, setText] = useState(task.name);
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setText(e.target.value);
+  };
+
   return (
-    <div className="flex items-center justify-between h-12 p-3 rounded group hover:bg-gray-100 focus-within:outline-none focus-within:ring focus-within:ring-black">
+    <div className="flex items-center justify-between h-12 p-3 rounded appearance-none group hover:bg-gray-100 focus-within:outline-none focus-within:border-gray-900 focus-within:ring-gray-900">
       <div className="flex items-center flex-1 space-x-3">
         <input
           type="checkbox"
@@ -30,13 +37,24 @@ export default function TaskItem({
           disabled={task.removed}
           checked={task.done}
           onChange={() => handleOnCheck(task)}
-          className="w-6 h-6 text-lg text-black rounded cursor-pointer hover:bg-gray-200 focus:ring focus:ring-black focus:border-black"
+          className="w-6 h-6 text-lg text-gray-900 rounded cursor-pointer hover:bg-gray-200 focus:ring focus:ring-gray-900 focus:border-gray-900"
         />
         {editable ? (
-          <input
-            value={task.name}
-            className="text-lg font-medium focus:outline-none group-hover:bg-gray-100 "
-          />
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleOnUpdate(task, text);
+              handleEditable();
+            }}
+          >
+            <input
+              type="text"
+              value={text}
+              placeholder="Add new task"
+              onChange={(e) => handleOnChange(e)}
+              className="text-lg font-medium focus:outline-none group-hover:bg-gray-100 "
+            />
+          </form>
         ) : (
           <div className="text-lg font-medium text-gray-900">{task.name}</div>
         )}
@@ -44,7 +62,7 @@ export default function TaskItem({
           onClick={handleEditable}
           className="items-center justify-center hidden w-8 h-8 text-gray-900 rounded group-hover:flex hover:bg-gray-200"
         >
-          E
+          {editable ? 'C' : 'E'}
         </button>
       </div>
       <button

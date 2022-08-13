@@ -60,6 +60,25 @@ export default function Tasks() {
     }
   };
 
+  const handleOnUpdate = async (task: TaskData, text: string) => {
+    const toUpdate = { ...task, name: text };
+    fetch(`/api/tasks/${task.id}/name`, {
+      method: HttpMethod.PATCH,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(toUpdate),
+    });
+    const newTasks = tasks.map((t) => {
+      if (t.id === task.id) {
+        return toUpdate;
+      }
+      return t;
+    });
+
+    setTasks(newTasks);
+  };
+
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setText(e.target.value);
   };
@@ -142,6 +161,7 @@ export default function Tasks() {
                           task={task}
                           handleOnCheck={handleOnCheck}
                           handleOnRemove={handleOnRemove}
+                          handleOnUpdate={handleOnUpdate}
                         ></TaskItem>
                       ))}
                       {removedTasks.length > 0 ? (
