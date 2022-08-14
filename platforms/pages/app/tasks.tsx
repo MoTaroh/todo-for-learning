@@ -171,21 +171,23 @@ export default function Tasks() {
                   )}
                 </div>
                 <div>
-                  <h3 className="mb-3 text-xl font-bold">Trashes</h3>
                   {removedTasks.length > 0 ? (
-                    <ul className="flex flex-col space-y-2">
-                      {removedTasks.map((task) => (
-                        <TaskItem
-                          key={task.id}
-                          task={task}
-                          handleOnCheck={handleOnCheck}
-                          handleOnRemove={handleOnRemove}
-                          handleOnUpdate={handleOnUpdate}
-                        ></TaskItem>
-                      ))}
-                    </ul>
+                    <>
+                      <h3 className="mb-3 text-xl font-bold">Trashes</h3>
+                      <ul className="flex flex-col space-y-2">
+                        {removedTasks.map((task) => (
+                          <TaskItem
+                            key={task.id}
+                            task={task}
+                            handleOnCheck={handleOnCheck}
+                            handleOnRemove={handleOnRemove}
+                            handleOnUpdate={handleOnUpdate}
+                          ></TaskItem>
+                        ))}
+                      </ul>
+                    </>
                   ) : (
-                    <div></div>
+                    <></>
                   )}
                 </div>
               </div>
