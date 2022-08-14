@@ -60,10 +60,13 @@ export default function Tasks() {
     }
   };
 
-  const handleOnUpdate = async (task: TaskData, text: string) => {
-    const toUpdate = { ...task, name: text };
-    fetch(`/api/tasks/${task.id}/name`, {
-      method: HttpMethod.PATCH,
+  const handleOnUpdate = async (task: TaskData, name: string) => {
+    // for api
+    const toUpdate = { name: name };
+    // for view
+    const updated = { ...task, name: name };
+    fetch(`/api/tasks/${task.id}`, {
+      method: HttpMethod.PUT,
       headers: {
         'Content-Type': 'application/json',
       },
@@ -71,7 +74,7 @@ export default function Tasks() {
     });
     const newTasks = tasks.map((t) => {
       if (t.id === task.id) {
-        return toUpdate;
+        return updated;
       }
       return t;
     });

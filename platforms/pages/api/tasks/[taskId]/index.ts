@@ -1,4 +1,5 @@
 import { FindTaskController } from '@/lib/api/task/presentation/FindTaskController';
+import { UpdateTaskController } from '@/lib/api/task/presentation/UpdateTaskController';
 import { HttpMethod } from '@/types';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { unstable_getServerSession } from 'next-auth/next';
@@ -15,6 +16,10 @@ export default async function handler(
     case HttpMethod.GET: {
       const findTaskController = new FindTaskController();
       return findTaskController.findTask(req, res);
+    }
+    case HttpMethod.PUT: {
+      const updateTaskController = new UpdateTaskController();
+      return updateTaskController.updateTask(req, res);
     }
   }
 }
