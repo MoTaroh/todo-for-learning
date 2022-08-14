@@ -40,18 +40,25 @@ export default function TaskItem({
     setText(e.target.value);
   };
 
+  const [checked, setChecked] = useState(task.done);
+  const onChecked = () => {
+    setChecked(!checked);
+    handleOnCheck(task);
+  };
+
   return (
     <div className="flex items-center justify-between h-12 p-3 space-x-3 rounded appearance-none group hover:bg-gray-100 focus-within:outline-none focus-within:border-gray-900 focus-within:ring-gray-900">
       <div className="flex items-center flex-1 space-x-3">
-        <input
-          type="checkbox"
-          name={task.name}
-          id={task.id}
-          disabled={task.removed}
-          checked={task.done}
-          onChange={() => handleOnCheck(task)}
-          className="w-6 h-6 text-lg text-gray-900 rounded cursor-pointer hover:bg-gray-200 focus:ring focus:ring-gray-900 focus:border-gray-900"
-        />
+        <button
+          onClick={onChecked}
+          className={`${
+            checked
+              ? 'text-white bg-gray-900 hover:bg-gray-700'
+              : 'text-white hover:text-gray-200 bg-white'
+          } w-6 h-6 border border-gray-900 rounded focus:outline-none focus:ring focus:border-white focus:ring-gray-900`}
+        >
+          <CheckIcon />
+        </button>
         {editable ? (
           <form
             onSubmit={(e) => {
@@ -91,7 +98,7 @@ export default function TaskItem({
           task.removed
             ? 'bg-green-300 hover:bg-green-200 text-green-600'
             : 'bg-red-300 hover:bg-red-200 text-red-600'
-        } group-hover:flex items-center justify-center hidden h-8 w-8 rounded `}
+        } group-hover:flex items-center justify-center hidden h-8 w-8 rounded`}
       >
         {task.removed ? (
           <ReplyIcon className="w-6 h-6" />
