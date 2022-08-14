@@ -51,6 +51,7 @@ export default function TaskItem({
       <div className="flex items-center flex-1 space-x-3">
         <button
           onClick={onChecked}
+          disabled={task.removed}
           className={`${
             checked
               ? 'text-white bg-gray-900 hover:bg-gray-700'
@@ -83,6 +84,7 @@ export default function TaskItem({
         )}
         <button
           onClick={handleEditable}
+          disabled={task.removed}
           className="items-center justify-center hidden w-8 h-8 text-gray-900 rounded group-hover:flex hover:bg-gray-200"
         >
           {editable ? (
