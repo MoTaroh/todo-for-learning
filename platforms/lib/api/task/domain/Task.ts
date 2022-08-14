@@ -71,4 +71,7 @@ export class Task implements TaskType {
   restore() {
     this.removed = false;
   }
+  changeName(name: TaskName) {
+    this.name = name;
+  }
 }
