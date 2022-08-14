@@ -124,12 +124,32 @@ export default function Tasks() {
     setTasks(newTasks);
   };
 
-  const removedTasks = tasks.filter((task) => {
-    return task.removed;
-  });
-  const notRemovedTasks = tasks.filter((task) => {
-    return !task.removed;
-  });
+  const removedTasks = tasks
+    .filter((task) => {
+      return task.removed;
+    })
+    .sort((t1, t2) => {
+      if (t1.done > t2.done) {
+        return 1;
+      }
+      if (t1.done < t2.done) {
+        return -1;
+      }
+      return 0;
+    });
+  const notRemovedTasks = tasks
+    .filter((task) => {
+      return !task.removed;
+    })
+    .sort((t1, t2) => {
+      if (t1.done > t2.done) {
+        return 1;
+      }
+      if (t1.done < t2.done) {
+        return -1;
+      }
+      return 0;
+    });
 
   return (
     <Layout>
