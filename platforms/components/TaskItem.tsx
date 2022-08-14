@@ -56,7 +56,11 @@ export default function TaskItem({
             checked
               ? 'text-white bg-gray-900 hover:bg-gray-700'
               : 'text-white hover:text-gray-200 bg-white'
-          } w-6 h-6 border border-gray-900 rounded focus:outline-none focus:ring focus:border-white focus:ring-gray-900`}
+          } ${
+            task.removed
+              ? 'cursor-not-allowed'
+              : 'focus:outline-none focus:ring focus:border-white focus:ring-gray-900'
+          } w-6 h-6 border border-gray-900 rounded `}
         >
           <CheckIcon />
         </button>
@@ -85,7 +89,9 @@ export default function TaskItem({
         <button
           onClick={handleEditable}
           disabled={task.removed}
-          className="items-center justify-center hidden w-8 h-8 text-gray-900 rounded group-hover:flex hover:bg-gray-200"
+          className={`${
+            task.removed ? 'group-hover:hidden' : 'group-hover:flex'
+          } items-center justify-center hidden w-8 h-8 text-gray-900 rounded hover:bg-gray-200`}
         >
           {editable ? (
             <CheckIcon className="w-6 h-6" />
