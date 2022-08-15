@@ -43,6 +43,14 @@ describe('Entity: Task', () => {
         // then
         expect(task.done).toEqual(false);
       });
+      test('タスクが削除状態の場合、完了状態を変更しようとすると例外が発生する', () => {
+        // given
+        const task = Task.create(taskName, cuid());
+        task.remove();
+
+        // when & then
+        expect(() => task.doneTask()).toThrow('削除済みタスクは編集できません');
+      });
     });
 
     describe('削除状態', () => {
@@ -66,6 +74,20 @@ describe('Entity: Task', () => {
 
         // then
         expect(task.removed).toEqual(false);
+      });
+    });
+
+    describe('タスク詳細の更新', () => {
+      test('タスク名を更新すると、更新される', () => {
+        // given
+        const task = Task.create(taskName, cuid());
+        const newName = new TaskName('Updated');
+
+        // when
+        task.changeName(newName);
+
+        // then
+        expect(task.name).toEqual(newName);
       });
     });
   });
