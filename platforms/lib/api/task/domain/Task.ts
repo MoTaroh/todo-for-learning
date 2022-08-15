@@ -59,10 +59,16 @@ export class Task implements TaskType {
 
   doneTask() {
     // TODO: use Enum map?
+    if (this.removed) {
+      throw new Error('削除済みタスクは編集できません');
+    }
     this.done = true;
   }
   undoneTask() {
     // TODO: use Enum map?
+    if (this.removed) {
+      throw new Error('削除済みタスクは編集できません');
+    }
     this.done = false;
   }
   remove() {
@@ -72,6 +78,9 @@ export class Task implements TaskType {
     this.removed = false;
   }
   changeName(name: TaskName) {
+    if (this.removed) {
+      throw new Error('削除済みタスクは編集できません');
+    }
     this.name = name;
   }
 }

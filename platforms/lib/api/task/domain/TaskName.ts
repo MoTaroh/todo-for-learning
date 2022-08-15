@@ -3,9 +3,9 @@ export class TaskName {
   value: string;
 
   constructor(name: string) {
-    if (name.length > this.TASK_NAME_MAX_LENGTH) {
+    if (0 === name.length || name.length > this.TASK_NAME_MAX_LENGTH) {
       throw new Error(
-        `タスク名は${this.TASK_NAME_MAX_LENGTH}文字以下で入力してください`
+        `タスク名は1文字以上、${this.TASK_NAME_MAX_LENGTH}文字以下で入力してください`
       );
     }
     this.value = name;
