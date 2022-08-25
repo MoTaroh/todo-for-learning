@@ -106,16 +106,17 @@ model Site {
 
 // Super Simple Model for phase 1
 model Task {
-  id         String   @id @default(cuid())
-  name       String
-  done       Boolean  @default(false)
-  removed    Boolean  @default(false)
-  category   Category @relation(fields: [categoryId], references: [id])
-  categoryId String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  user       User     @relation(fields: [userId], references: [id])
-  userId     String
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  done        Boolean   @default(false)
+  removed     Boolean   @default(false)
+  category    Category? @relation(fields: [categoryId], references: [id])
+  categoryId  String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String
 }
 
 model Category {
