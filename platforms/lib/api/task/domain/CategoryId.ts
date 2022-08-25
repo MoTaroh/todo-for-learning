@@ -1,7 +1,9 @@
-export class CategoryId {
-  value: string | null;
+import cuid from 'cuid';
 
-  constructor(id: string | null) {
-    this.value = id || null;
+export class CategoryId {
+  value: string;
+
+  constructor(id?: string) {
+    this.value = id ? id : cuid();
   }
 }
