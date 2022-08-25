@@ -21,22 +21,28 @@ export class FindTaskUseCase {
 export interface FindTaskDtoType {
   id: string;
   name: string;
+  description: string | null;
   done: boolean;
   removed: boolean;
+  categoryId: string | null;
   userId: string;
 }
 class FindTaskDto implements FindTaskDtoType {
   id: string;
   name: string;
+  description: string | null;
   done: boolean;
   removed: boolean;
+  categoryId: string | null;
   userId: string;
 
   constructor(task: Task) {
     this.id = task.id.value;
     this.name = task.name.value;
+    this.description = task.description.value;
     this.done = task.done;
     this.removed = task.removed;
+    this.categoryId = task.categoryId.value;
     this.userId = task.userId;
   }
 }

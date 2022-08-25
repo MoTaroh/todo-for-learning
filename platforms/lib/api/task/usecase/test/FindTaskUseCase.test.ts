@@ -1,5 +1,7 @@
 import cuid from 'cuid';
+import { CategoryId } from '../../domain/CategoryId';
 import { Task } from '../../domain/Task';
+import { TaskDescription } from '../../domain/TaskDescription';
 import { TaskId } from '../../domain/TaskId';
 import { TaskName } from '../../domain/TaskName';
 import { TaskRepository } from '../../infrastructure/TaskRepository';
@@ -14,14 +16,17 @@ describe('UseCase: findTask', () => {
       // These are for mock response. TODO: use mockDB
       const userId = cuid();
       const taskName = 'mock task';
+      const taskDescription = 'mock task description';
       const findSpy = jest
         .spyOn(TaskRepository.prototype, 'findAll')
         .mockResolvedValue([
           Task.reconstruct({
             id: new TaskId(),
             name: new TaskName(taskName),
+            description: new TaskDescription(taskDescription),
             done: false,
             removed: false,
+            categoryId: new CategoryId(cuid()),
             userId: userId,
           }),
         ]);

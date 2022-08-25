@@ -1,21 +1,25 @@
 import cuid from 'cuid';
+import { CategoryId } from '../CategoryId';
 import { Task } from '../Task';
+import { TaskDescription } from '../TaskDescription';
 import { TaskId } from '../TaskId';
 import { TaskName } from '../TaskName';
 
 const taskName = new TaskName('Test task');
+const taskDescription = new TaskDescription('Test task description');
+const categoryId = new CategoryId(cuid());
+const userId = cuid();
+const task = Task.create(taskName, taskDescription, categoryId, userId);
 
 describe('Entity: Task', () => {
   describe('Creation Method', () => {
     test('新しくタスクを作成すると、未完了かつ未削除のインスタンスが生成される', () => {
-      // when
-      const userId = cuid();
-      const task = Task.create(taskName, userId);
-
       // then
       expect(task.done).toEqual(false);
       expect(task.removed).toEqual(false);
       expect(task.name).toEqual(taskName);
+      expect(task.description).toEqual(taskDescription);
+      expect(task.categoryId).toEqual(categoryId);
       expect(task.userId).toEqual(userId);
     });
   });
@@ -23,9 +27,6 @@ describe('Entity: Task', () => {
   describe('Mutation Method', () => {
     describe('完了状態', () => {
       test('タスクを完了すると、完了状態になる', () => {
-        // given
-        const task = Task.create(taskName, cuid());
-
         // when
         task.doneTask();
 
@@ -33,8 +34,6 @@ describe('Entity: Task', () => {
         expect(task.done).toEqual(true);
       });
       test('タスクを未完了にすると、未完了状態になる', () => {
-        // given
-        const task = Task.create(taskName, cuid());
         task.doneTask();
 
         // when
@@ -44,8 +43,6 @@ describe('Entity: Task', () => {
         expect(task.done).toEqual(false);
       });
       test('タスクが削除状態の場合、完了状態を変更しようとすると例外が発生する', () => {
-        // given
-        const task = Task.create(taskName, cuid());
         task.remove();
 
         // when & then
@@ -55,9 +52,6 @@ describe('Entity: Task', () => {
 
     describe('削除状態', () => {
       test('タスクを削除すると、削除状態になる', () => {
-        // given
-        const task = Task.create(taskName, cuid());
-
         // when
         task.remove();
 
@@ -65,8 +59,6 @@ describe('Entity: Task', () => {
         expect(task.removed).toEqual(true);
       });
       test('タスクを復元すると、未削除状態になる', () => {
-        // given
-        const task = Task.create(taskName, cuid());
         task.remove();
 
         // when
@@ -79,8 +71,6 @@ describe('Entity: Task', () => {
 
     describe('タスク詳細の更新', () => {
       test('タスク名を更新すると、更新される', () => {
-        // given
-        const task = Task.create(taskName, cuid());
         const newName = new TaskName('Updated');
 
         // when
@@ -98,10 +88,12 @@ describe('Entity: Task', () => {
       // DBからのレコードのイメージ
       const taskRecord = {
         id: new TaskId(),
-        name: new TaskName('Test task'),
+        name: taskName,
+        description: taskDescription,
         done: true,
         removed: true,
-        userId: cuid(),
+        categoryId: categoryId,
+        userId: userId,
       };
 
       // when
@@ -110,8 +102,10 @@ describe('Entity: Task', () => {
       // then
       expect(task.id).toEqual(taskRecord.id);
       expect(task.name).toEqual(taskRecord.name);
+      expect(task.description).toEqual(taskRecord.description);
       expect(task.done).toEqual(taskRecord.done);
       expect(task.removed).toEqual(taskRecord.removed);
+      expect(task.categoryId).toEqual(taskRecord.categoryId);
       expect(task.userId).toEqual(taskRecord.userId);
     });
   });

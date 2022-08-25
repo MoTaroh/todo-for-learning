@@ -11,11 +11,16 @@ export class CreateTaskController {
   ): Promise<void | NextApiResponse<Task>> {
     if (!session.user.id)
       return res.status(500).end('Server failed to get session user ID');
-    const { name } = req.body;
+    const { name, description, categoryId } = req.body;
     const usecase = new CreateTaskUseCase();
 
     try {
-      const newTask = await usecase.execute(name, session.user.id);
+      const newTask = await usecase.execute(
+        name,
+        description,
+        categoryId,
+        session.user.id
+      );
 
       return res.status(201).json(newTask);
     } catch (error) {

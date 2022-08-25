@@ -1,5 +1,5 @@
 export class TaskName {
-  private readonly TASK_NAME_MAX_LENGTH = 20;
+  private readonly TASK_NAME_MAX_LENGTH = 64;
   value: string;
 
   constructor(name: string) {
