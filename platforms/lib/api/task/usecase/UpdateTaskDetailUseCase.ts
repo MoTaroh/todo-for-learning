@@ -1,4 +1,4 @@
-import { TaskId } from '../domain/TaskId';
+import { ObjectId } from '../domain/ObjectId';
 import { TaskName } from '../domain/TaskName';
 import { TaskRepository } from '../infrastructure/TaskRepository';
 
@@ -9,7 +9,7 @@ export class UpdateTaskDetailUseCase {
   taskRepository: TaskRepository = new TaskRepository();
 
   async execute(taskId: string, detail: Detail): Promise<void> {
-    const id = new TaskId(taskId);
+    const id = new ObjectId(taskId);
     const task = await this.taskRepository.findById(id);
     if (!task) {
       throw new Error(`Task ${id} not found`);

@@ -1,22 +1,22 @@
 import { CategoryColor } from './CategoryColor';
-import { CategoryId } from './CategoryId';
+import { ObjectId } from './ObjectId';
 import { CategoryName } from './CategoryName';
 
 interface CategoryType {
-  id: CategoryId;
+  id: ObjectId;
   name: CategoryName;
   color: CategoryColor;
   userId: string;
 }
 
 export class Category implements CategoryType {
-  id: CategoryId;
+  id: ObjectId;
   name: CategoryName;
   color: CategoryColor;
   userId: string;
 
   private constructor(
-    id: CategoryId,
+    id: ObjectId,
     name: CategoryName,
     color: CategoryColor,
     userId: string
@@ -28,7 +28,7 @@ export class Category implements CategoryType {
   }
 
   static create(name: CategoryName, color: CategoryColor, userId: string) {
-    const id = new CategoryId();
+    const id = new ObjectId();
     const categoryName = name;
     const categoryColor = color;
     const uId = userId;

@@ -1,13 +1,12 @@
 import cuid from 'cuid';
-import { CategoryId } from '../CategoryId';
+import { ObjectId } from '../ObjectId';
 import { Task } from '../Task';
 import { TaskDescription } from '../TaskDescription';
-import { TaskId } from '../TaskId';
 import { TaskName } from '../TaskName';
 
 const taskName = new TaskName('Test task');
 const taskDescription = new TaskDescription('Test task description');
-const categoryId = new CategoryId(cuid());
+const categoryId = new ObjectId(cuid());
 const userId = cuid();
 const task = Task.create(taskName, taskDescription, categoryId, userId);
 
@@ -87,7 +86,7 @@ describe('Entity: Task', () => {
       // given
       // DBからのレコードのイメージ
       const taskRecord = {
-        id: new TaskId(),
+        id: new ObjectId(),
         name: taskName,
         description: taskDescription,
         done: true,

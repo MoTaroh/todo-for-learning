@@ -1,34 +1,33 @@
-import { CategoryId } from './CategoryId';
 import { TaskDescription } from './TaskDescription';
-import { TaskId } from './TaskId';
 import { TaskName } from './TaskName';
+import { ObjectId } from './ObjectId';
 
 interface TaskType {
-  id: TaskId;
+  id: ObjectId;
   name: TaskName;
   description: TaskDescription;
   done: boolean;
   removed: boolean;
-  categoryId: CategoryId;
+  categoryId: ObjectId | null;
   userId: string;
 }
 
 export class Task implements TaskType {
-  id: TaskId;
+  id: ObjectId;
   name: TaskName;
   description: TaskDescription;
   done: boolean;
   removed: boolean;
-  categoryId: CategoryId;
+  categoryId: ObjectId | null;
   userId: string;
 
   private constructor(
-    id: TaskId,
+    id: ObjectId,
     name: TaskName,
     description: TaskDescription,
     done: boolean,
     removed: boolean,
-    categoryId: CategoryId,
+    categoryId: ObjectId | null,
     userId: string
   ) {
     this.id = id;
@@ -50,10 +49,10 @@ export class Task implements TaskType {
   static create(
     name: TaskName,
     description: TaskDescription,
-    category: CategoryId,
+    category: ObjectId | null,
     userId: string
   ) {
-    const id = new TaskId();
+    const id = new ObjectId();
     const taskName = name;
     const taskDescription = description;
     const done = false;

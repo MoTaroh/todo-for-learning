@@ -1,9 +1,8 @@
 import prisma from '@/lib/prisma';
 import { Task as TaskDBType } from '@prisma/client';
-import { CategoryId } from '../domain/CategoryId';
+import { ObjectId } from '../domain/ObjectId';
 import { Task } from '../domain/Task';
 import { TaskDescription } from '../domain/TaskDescription';
-import { TaskId } from '../domain/TaskId';
 import { TaskName } from '../domain/TaskName';
 import { ITaskRepository } from '../domain/TaskRepository';
 
@@ -21,7 +20,7 @@ export class TaskRepository implements ITaskRepository {
     return taskRecords.map((r) => mapRecordToEntity(r));
   }
 
-  async findById(taskId: TaskId): Promise<Task | null> {
+  async findById(taskId: ObjectId): Promise<Task | null> {
     const taskRecord = await prisma.task.findUnique({
       where: {
         id: taskId.value,
@@ -38,7 +37,7 @@ export class TaskRepository implements ITaskRepository {
         id: id.value,
         name: name.value,
         description: description.value,
-        categoryId: categoryId.value,
+        categoryId: categoryId?.value || null,
         ...partial,
       },
     });
@@ -53,7 +52,7 @@ export class TaskRepository implements ITaskRepository {
         id: id.value,
         name: name.value,
         description: description.value,
-        categoryId: categoryId.value,
+        categoryId: categoryId?.value || null,
         ...partial,
       },
       where: { id: id.value },
@@ -72,12 +71,12 @@ function mapRecordToEntity(taskRecord: TaskDBType): Task {
   const { id, name, description, done, removed, categoryId, userId } =
     taskRecord;
   const record = {
-    id: new TaskId(id),
+    id: new ObjectId(id),
     name: new TaskName(name),
     description: new TaskDescription(description),
     done: done,
     removed: removed,
-    categoryId: new CategoryId(categoryId),
+    categoryId: categoryId ? new ObjectId(categoryId) : null,
     userId: userId,
   };
 

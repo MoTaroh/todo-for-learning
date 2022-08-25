@@ -1,11 +1,11 @@
-import { TaskId } from '../domain/TaskId';
+import { ObjectId } from '../domain/ObjectId';
 import { TaskRepository } from '../infrastructure/TaskRepository';
 
 export class UpdateTaskDoneStatusUseCase {
   taskRepository: TaskRepository = new TaskRepository();
 
   async doneTask(taskId: string): Promise<void> {
-    const id = new TaskId(taskId);
+    const id = new ObjectId(taskId);
     const task = await this.taskRepository.findById(id);
     if (!task) {
       throw new Error(`Task ${id} not found`);
@@ -16,7 +16,7 @@ export class UpdateTaskDoneStatusUseCase {
   }
 
   async undoneTask(taskId: string): Promise<void> {
-    const id = new TaskId(taskId);
+    const id = new ObjectId(taskId);
     const task = await this.taskRepository.findById(id);
     if (!task) {
       throw new Error(`Task ${id} not found`);

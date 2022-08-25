@@ -1,8 +1,7 @@
 import cuid from 'cuid';
-import { CategoryId } from '../../domain/CategoryId';
+import { ObjectId } from '../../domain/ObjectId';
 import { Task } from '../../domain/Task';
 import { TaskDescription } from '../../domain/TaskDescription';
-import { TaskId } from '../../domain/TaskId';
 import { TaskName } from '../../domain/TaskName';
 import { TaskRepository } from '../../infrastructure/TaskRepository';
 import { CreateTaskUseCase } from '../CreateTaskUseCase';
@@ -20,12 +19,12 @@ describe('UseCase: CreateTask', () => {
       .spyOn(TaskRepository.prototype, 'create')
       .mockResolvedValue(
         Task.reconstruct({
-          id: new TaskId(),
+          id: new ObjectId(),
           name: new TaskName(taskName),
           description: new TaskDescription(taskDescription),
           done: false,
           removed: false,
-          categoryId: new CategoryId(categoryId),
+          categoryId: new ObjectId(categoryId),
           userId: userId,
         })
       );

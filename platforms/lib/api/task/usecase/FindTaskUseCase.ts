@@ -1,12 +1,12 @@
 import { Task } from '../domain/Task';
-import { TaskId } from '../domain/TaskId';
+import { ObjectId } from '../domain/ObjectId';
 import { TaskRepository } from '../infrastructure/TaskRepository';
 
 export class FindTaskUseCase {
   taskRepository: TaskRepository = new TaskRepository();
 
   async findTaskById(taskId: string): Promise<FindTaskDtoType | null> {
-    const task = await this.taskRepository.findById(new TaskId(taskId));
+    const task = await this.taskRepository.findById(new ObjectId(taskId));
 
     return task ? new FindTaskDto(task) : null;
   }
@@ -42,7 +42,7 @@ class FindTaskDto implements FindTaskDtoType {
     this.description = task.description.value;
     this.done = task.done;
     this.removed = task.removed;
-    this.categoryId = task.categoryId.value;
+    this.categoryId = task.categoryId?.value || null;
     this.userId = task.userId;
   }
 }

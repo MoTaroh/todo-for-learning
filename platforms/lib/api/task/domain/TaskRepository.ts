@@ -1,9 +1,9 @@
 import { Task } from './Task';
-import { TaskId } from './TaskId';
+import { ObjectId } from './ObjectId';
 
 export interface ITaskRepository {
   findAll: (userId: string) => Promise<Task[]>;
-  findById: (taskId: TaskId) => Promise<Task | null>;
+  findById: (taskId: ObjectId) => Promise<Task | null>;
   create: (task: Task) => Promise<Task>;
   update: (task: Task) => Promise<Task>;
 }

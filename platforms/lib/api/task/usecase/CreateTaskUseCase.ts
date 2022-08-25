@@ -2,7 +2,7 @@ import { Task } from '../domain/Task';
 import { TaskRepository } from '../infrastructure/TaskRepository';
 import { TaskName } from '../domain/TaskName';
 import { TaskDescription } from '../domain/TaskDescription';
-import { CategoryId } from '../domain/CategoryId';
+import { ObjectId } from '../domain/ObjectId';
 
 export class CreateTaskUseCase {
   taskRepository: TaskRepository = new TaskRepository();
@@ -15,7 +15,7 @@ export class CreateTaskUseCase {
   ): Promise<CreateTaskDtoType> {
     const taskName = new TaskName(name);
     const taskDescription = new TaskDescription(description);
-    const categoryId = new CategoryId(category);
+    const categoryId = category ? new ObjectId(category) : null;
     const task = Task.create(taskName, taskDescription, categoryId, userId);
     try {
       this.taskRepository.create(task);
@@ -53,7 +53,7 @@ class CreateTaskDto implements CreateTaskDtoType {
     this.description = task.description.value;
     this.done = task.done;
     this.removed = task.removed;
-    this.categoryId = task.categoryId.value;
+    this.categoryId = task.categoryId?.value || null;
     this.userId = task.userId;
   }
 }
