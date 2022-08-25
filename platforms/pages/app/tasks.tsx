@@ -165,7 +165,7 @@ export default function Tasks() {
             <input
               type="text"
               value={text}
-              placeholder="Press “Enter” to add a new task..."
+              placeholder="Press “Enter” to add a new task."
               className="w-full mb-6 rounded appearance-none focus:outline-none focus:ring-black focus:border-black "
               onChange={(e) => handleOnChange(e)}
             />
