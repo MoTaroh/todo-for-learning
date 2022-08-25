@@ -10,6 +10,7 @@ export class TaskRepository implements ITaskRepository {
   async findAll(userId: string): Promise<Task[]> {
     const taskRecords = await prisma.task.findMany({
       where: {
+        removed: false,
         userId: userId,
       },
       orderBy: {
