@@ -44,4 +44,12 @@ export class Category implements CategoryType {
       categoryRecord.userId
     );
   }
+
+  changeName(name: CategoryName) {
+    this.name = name;
+  }
+
+  changeColor(color: CategoryColor) {
+    this.color = color;
+  }
 }

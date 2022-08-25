@@ -41,4 +41,24 @@ describe('Entity: Category', () => {
       expect(category.userId).toEqual(categoryRecord.userId);
     });
   });
+
+  describe('Mutation Method', () => {
+    test('カテゴリ名を更新すると、更新される', () => {
+      const category = Category.create(categoryName, categoryColor, userId);
+      const newName = new CategoryName('Updated');
+
+      category.changeName(newName);
+
+      expect(category.name).toEqual(newName);
+    });
+
+    test('カテゴリ色を更新すると、更新される', () => {
+      const category = Category.create(categoryName, categoryColor, userId);
+      const newColor = new CategoryColor('green');
+
+      category.changeColor(newColor);
+
+      expect(category.color).toEqual(newColor);
+    });
+  });
 });
