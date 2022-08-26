@@ -7,6 +7,12 @@ module.exports = {
     './components/**/*.{js,ts,jsx,tsx}',
     './lib/**/*.{js,ts,jsx,tsx}',
   ],
+  safelist: [
+    {
+      pattern:
+        /(bg|text)-(gray|red|yellow|green|blue|indigo|purple|pink)-(200|600|800)/,
+    },
+  ],
   darkMode: 'media',
   theme: {
     fontFamily: {

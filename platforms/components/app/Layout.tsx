@@ -7,6 +7,7 @@ import Loader from './Loader';
 import useRequireAuth from '../../lib/useRequireAuth';
 
 import type { WithChildren } from '@/types';
+import LeftNavigation from '../LeftNavigation';
 
 interface LayoutProps extends WithChildren {
   siteId?: string;
@@ -80,7 +81,10 @@ export default function Layout({ children }: LayoutProps) {
             </div>
           </div>
         </div>
-        <div className="h-full pt-16">{children}</div>
+        <div className="flex h-full pt-16">
+          <LeftNavigation></LeftNavigation>
+          <div className="flex-1 h-full">{children}</div>
+        </div>
       </div>
     </>
   );
