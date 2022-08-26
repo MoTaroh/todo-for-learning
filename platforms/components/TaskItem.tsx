@@ -3,8 +3,8 @@ import {
   TrashIcon,
   PencilIcon,
   CheckIcon,
-  ReplyIcon,
-} from '@heroicons/react/outline';
+  ArrowUturnLeftIcon,
+} from '@heroicons/react/24/outline';
 
 interface TaskData {
   readonly id: string | undefined;
@@ -109,7 +109,7 @@ export default function TaskItem({
         } group-hover:flex items-center justify-center hidden h-8 w-8 rounded`}
       >
         {task.removed ? (
-          <ReplyIcon className="w-6 h-6" />
+          <ArrowUturnLeftIcon className="w-6 h-6" />
         ) : (
           <TrashIcon className="w-6 h-6" />
         )}

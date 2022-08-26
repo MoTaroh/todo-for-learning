@@ -1,4 +1,4 @@
-import { ChevronDoubleLeftIcon, PlusIcon } from '@heroicons/react/outline';
+import { ChevronDoubleLeftIcon, PlusIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { useState } from 'react';
 import NavigationButton from './NavigationButton';
@@ -51,12 +51,12 @@ export default function LeftNavigation() {
                 </a>
               </Link>
             ))}
-            <div className="flex p-3 space-x-2 text-gray-600 hover:bg-white">
+            <button className="flex w-full p-3 space-x-2 text-gray-600 hover:bg-white">
               <div>
                 <PlusIcon className="w-6 h-6"></PlusIcon>
               </div>
               {open && <div className="text-lg">New Category</div>}
-            </div>
+            </button>
           </ul>
         </div>
       </div>
