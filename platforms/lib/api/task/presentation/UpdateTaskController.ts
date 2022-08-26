@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { UpdateTaskCategoryUseCase } from '../usecase/UpdateTaskCategoryUseCase';
 import { UpdateTaskDetailUseCase } from '../usecase/UpdateTaskDetailUseCase';
 import { UpdateTaskDoneStatusUseCase } from '../usecase/UpdateTaskDoneStatusUseCase';
 import { UpdateTaskRemovedStatusUseCase } from '../usecase/UpdateTaskRemovedStatusUseCase';
@@ -80,6 +81,33 @@ export class UpdateTaskController {
         }
       default:
         return res.status(500).end('Invalid request');
+    }
+  }
+
+  async updateCategory(req: NextApiRequest, res: NextApiResponse) {
+    const usecase = new UpdateTaskCategoryUseCase();
+    const { taskId } = req.query;
+    const { categoryId } = req.body;
+
+    if (Array.isArray(taskId) || !taskId)
+      return res.status(400).end('Bad request. taskId parameter is invalid.');
+
+    if (categoryId) {
+      try {
+        await usecase.assignCategory(taskId, categoryId);
+        return res.status(204).end();
+      } catch (error) {
+        console.error(error);
+        return res.status(500).end(error);
+      }
+    } else {
+      try {
+        await usecase.unassignCategory(taskId);
+        return res.status(204).end();
+      } catch (error) {
+        console.error(error);
+        return res.status(500).end(error);
+      }
     }
   }
 }

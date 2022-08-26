@@ -109,4 +109,10 @@ export class Task implements TaskType {
     }
     this.name = name;
   }
+  assignCategory(categoryId: ObjectId) {
+    this.categoryId = categoryId;
+  }
+  unassignCategory() {
+    this.categoryId = null;
+  }
 }

@@ -79,6 +79,24 @@ describe('Entity: Task', () => {
         expect(task.name).toEqual(newName);
       });
     });
+
+    describe('カテゴリの割り当て', () => {
+      test('カテゴリIDを指定すると、タスクにカテゴリが割り当てられる', () => {
+        const categoryId = new ObjectId();
+
+        task.assignCategory(categoryId);
+
+        expect(task.categoryId).toEqual(categoryId);
+      });
+      test('カテゴリIDを指定しなければ、タスクに割り当てられたカテゴリが外れる', () => {
+        const categoryId = new ObjectId();
+
+        task.assignCategory(categoryId);
+        task.unassignCategory();
+
+        expect(task.categoryId).toEqual(null);
+      });
+    });
   });
 
   describe('Reconstruct Method', () => {
