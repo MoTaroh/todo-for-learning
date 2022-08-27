@@ -1,3 +1,4 @@
+import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import Layout from '@/components/app/Layout';
 import TaskItem from '@/components/TaskItem';
 import { HttpMethod } from '@/types';
@@ -162,13 +163,28 @@ export default function Tasks() {
               handleOnSubmit();
             }}
           >
-            <input
-              type="text"
-              value={text}
-              placeholder="Press “Enter” to add a new task."
-              className="w-full mb-6 rounded appearance-none focus:outline-none focus:ring-black focus:border-black "
-              onChange={(e) => handleOnChange(e)}
-            />
+            <div className="relative w-full mb-6 overflow-hidden border border-gray-600 divide-y divide-gray-600 rounded divide-dotted">
+              <div className="relative">
+                <input
+                  type="text"
+                  value={text}
+                  placeholder="Press “Enter” to add a new task."
+                  className="w-full p-3 border-0 appearance-none placeholder:text-gray-400 focus:outline-none focus:ring-0"
+                  onChange={(e) => handleOnChange(e)}
+                />
+                <button className="absolute flex items-center justify-between h-8 px-3 text-gray-400 transform -translate-y-1/2 bg-gray-100 w-52 top-1/2 right-3">
+                  <span>No Category</span>
+                  <ChevronDownIcon className="w-5 h-5 text-gray-600"></ChevronDownIcon>
+                </button>
+              </div>
+              <input
+                type="text"
+                value={text}
+                placeholder="Description"
+                className="w-full p-3 border-0 appearance-none placeholder:text-gray-400 focus:outline-none focus:ring-0"
+                onChange={(e) => handleOnChange(e)}
+              />
+            </div>
           </form>
           {!isLoading ? (
             tasks.length > 0 ? (
