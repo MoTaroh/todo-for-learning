@@ -2,15 +2,23 @@ import React, { useEffect, useState } from 'react';
 import {
   TrashIcon,
   PencilIcon,
-  CheckIcon,
   ArrowUturnLeftIcon,
 } from '@heroicons/react/24/outline';
+import { CheckIcon } from '@heroicons/react/20/solid';
+import Badge from './Badge';
 
 interface TaskData {
   readonly id: string | undefined;
   name: string;
+  description: string;
   done: boolean;
   removed: boolean;
+  categoryId: string | null;
+  category: {
+    id: string;
+    name: string;
+    color: string;
+  } | null;
 }
 interface Props {
   task: TaskData;
@@ -47,8 +55,11 @@ export default function TaskItem({
   };
 
   return (
-    <div className="flex items-center justify-between h-12 p-3 space-x-3 rounded appearance-none group hover:bg-gray-100 focus-within:outline-none focus-within:border-gray-900 focus-within:ring-gray-900">
-      <div className="flex items-center flex-1 space-x-3">
+    <div
+      onClick={}
+      className="flex items-start justify-between p-3 space-x-3 rounded appearance-none cursor-pointer group hover:bg-gray-100 focus-within:outline-none focus-within:border-gray-900 focus-within:ring-gray-900"
+    >
+      <div className="flex items-start flex-1 space-x-3">
         <button
           onClick={onChecked}
           disabled={task.removed}
@@ -60,60 +71,18 @@ export default function TaskItem({
             task.removed
               ? 'cursor-not-allowed'
               : 'focus:outline-none focus:ring focus:border-white focus:ring-gray-900'
-          } w-6 h-6 border border-gray-900 rounded `}
+          } w-6 h-6 mt-[2px] border border-gray-900 rounded `}
         >
           <CheckIcon />
         </button>
-        {editable ? (
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleOnUpdate(task, text);
-              handleEditable();
-            }}
-            className="flex-1"
-          >
-            <input
-              id="task-input"
-              type="text"
-              value={text}
-              placeholder="Press “Enter” to add a new task..."
-              onChange={(e) => handleOnChange(e)}
-              onBlur={handleEditable}
-              className="w-full h-8 text-lg font-medium border-0 rounded appearance-none focus:outline-none focus:ring-gray-900"
-            />
-          </form>
-        ) : (
-          <div className="text-lg font-medium text-gray-900">{task.name}</div>
-        )}
-        <button
-          onClick={handleEditable}
-          disabled={task.removed}
-          className={`${
-            task.removed ? 'group-hover:hidden' : 'group-hover:flex'
-          } items-center justify-center hidden w-8 h-8 text-gray-900 rounded hover:bg-gray-200`}
-        >
-          {editable ? (
-            <CheckIcon className="w-6 h-6" />
-          ) : (
-            <PencilIcon className="w-6 h-6" />
-          )}
-        </button>
+        <div className="flex flex-col space-y-1">
+          <span className="text-lg font-medium text-gray-900">{task.name}</span>
+          <span className="text-gray-600">{task.description}</span>
+        </div>
       </div>
-      <button
-        onClick={() => handleOnRemove(task)}
-        className={`${
-          task.removed
-            ? 'bg-green-300 hover:bg-green-200 text-green-600'
-            : 'bg-red-300 hover:bg-red-200 text-red-600'
-        } group-hover:flex items-center justify-center hidden h-8 w-8 rounded`}
-      >
-        {task.removed ? (
-          <ArrowUturnLeftIcon className="w-6 h-6" />
-        ) : (
-          <TrashIcon className="w-6 h-6" />
-        )}
-      </button>
+      {task.category && (
+        <Badge name={task.category.name} color={task.category.color}></Badge>
+      )}
     </div>
   );
 }
