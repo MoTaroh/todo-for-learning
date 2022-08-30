@@ -1,27 +1,28 @@
-import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import Layout from '@/components/app/Layout';
 import TaskItem from '@/components/TaskItem';
 import { HttpMethod } from '@/types';
 import { useEffect, useState } from 'react';
+import { CategoryData } from '@/types/category';
+import { TaskData } from '@/types/task';
+import ListBox from '@/components/ListBox';
 
-interface TaskData {
-  readonly id: string | undefined;
-  name: string;
-  done: boolean;
-  removed: boolean;
+interface TaskResponse extends TaskData {
+  category: CategoryData | null;
 }
 
 export default function Tasks() {
-  const [tasks, setTasks] = useState<TaskData[]>([]);
-  const [text, setText] = useState('');
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [tasks, setTasks] = useState<TaskResponse[]>([]);
+  const [taskName, setTaskName] = useState('');
+  const [taskDescription, setTaskDescription] = useState('');
+  const [categories, setCategories] = useState<CategoryData[]>([]);
 
   useEffect(() => {
     async function fetchTasks() {
       const res = await fetch('/api/tasks');
 
       if (res.ok) {
-        const fetchedTasks = await res.json();
+        const fetchedTasks: TaskResponse[] = await res.json();
 
         setTasks(fetchedTasks);
         setIsLoading(false);
@@ -30,18 +31,31 @@ export default function Tasks() {
       }
       console.error(res);
     }
+    async function fetchCategories() {
+      const res = await fetch('/api/categories');
+      if (res.ok) {
+        const fetchedCategories: CategoryData[] = await res.json();
+        setCategories(fetchedCategories);
+
+        return;
+      }
+      console.error(res);
+    }
 
     fetchTasks();
+    fetchCategories();
   }, []);
 
   const handleOnSubmit = async () => {
-    if (!text) return;
+    if (!taskName) return;
 
     const newTask: TaskData = {
       id: undefined,
-      name: text,
+      name: taskName,
+      description: taskDescription,
       done: false,
       removed: false,
+      categoryId: null,
     };
 
     const res = await fetch(`/api/tasks`, {
@@ -52,9 +66,10 @@ export default function Tasks() {
       body: JSON.stringify(newTask),
     });
     if (res.ok) {
-      const createdTask = await res.json();
+      const createdTask: TaskResponse = await res.json();
       const newTasks = [createdTask, ...tasks];
-      setText('');
+      setTaskName('');
+      setTaskDescription('');
       setTasks(newTasks);
     } else {
       console.error(`Error occured: ${JSON.stringify(res)}`);
@@ -63,31 +78,39 @@ export default function Tasks() {
 
   const handleOnUpdate = async (task: TaskData, name: string) => {
     // for api
-    const toUpdate = { name: name };
-    // for view
-    const updated = { ...task, name: name };
-    fetch(`/api/tasks/${task.id}`, {
-      method: HttpMethod.PUT,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(toUpdate),
-    });
-    const newTasks = tasks.map((t) => {
-      if (t.id === task.id) {
-        return updated;
-      }
-      return t;
-    });
-
-    setTasks(newTasks);
+    // const toUpdate = { name: name };
+    // // for view
+    // const updated = { ...task, name: name };
+    // fetch(`/api/tasks/${task.id}`, {
+    //   method: HttpMethod.PUT,
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify(toUpdate),
+    // });
+    // const newTasks = tasks.map((t) => {
+    //   if (t.id === task.id) {
+    //     return updated;
+    //   }
+    //   return t;
+    // });
+    // setTasks(newTasks);
   };
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setText(e.target.value);
+    switch (e.target.id) {
+      case 'taskName':
+        setTaskName(e.target.value);
+        break;
+      case 'taskDescription':
+        setTaskDescription(e.target.value);
+        break;
+      default:
+        break;
+    }
   };
 
-  const handleOnCheck = async (task: TaskData) => {
+  const handleOnCheck = async (task: TaskResponse) => {
     const toUpdate = { ...task, done: !task.done };
     fetch(`/api/tasks/${task.id}/done`, {
       method: HttpMethod.PATCH,
@@ -106,7 +129,7 @@ export default function Tasks() {
     setTasks(newTasks);
   };
 
-  const handleOnRemove = async (task: TaskData) => {
+  const handleOnRemove = async (task: TaskResponse) => {
     const toRemove = { ...task, removed: !task.removed };
     fetch(`/api/tasks/${task.id}/removed`, {
       method: HttpMethod.PATCH,
@@ -163,25 +186,30 @@ export default function Tasks() {
               handleOnSubmit();
             }}
           >
-            <div className="relative w-full mb-6 overflow-hidden border border-gray-600 divide-y divide-gray-600 rounded divide-dotted">
-              <div className="relative">
+            <div className="w-full mb-6 text-gray-900 border border-gray-600 divide-y divide-gray-600 rounded divide-dotted">
+              <div className="flex items-center">
                 <input
+                  id="taskName"
                   type="text"
-                  value={text}
+                  value={taskName}
                   placeholder="Press “Enter” to add a new task."
-                  className="w-full p-3 border-0 appearance-none placeholder:text-gray-400 focus:outline-none focus:ring-0"
+                  className="flex-1 p-3 border-0 rounded-t appearance-none placeholder:text-gray-400 focus:outline-none focus:ring-0"
                   onChange={(e) => handleOnChange(e)}
                 />
-                <button className="absolute flex items-center justify-between h-8 px-3 text-gray-400 transform -translate-y-1/2 bg-gray-100 w-52 top-1/2 right-3">
-                  <span>No Category</span>
-                  <ChevronDownIcon className="w-5 h-5 text-gray-600"></ChevronDownIcon>
-                </button>
+                <ListBox
+                  categories={[
+                    { id: 'default', name: 'No Category', color: 'gray' },
+                    { id: 'default2', name: 'No Category2', color: 'blue' },
+                    ...categories,
+                  ]}
+                ></ListBox>
               </div>
               <input
+                id="taskDescription"
                 type="text"
-                value={text}
+                value={taskDescription}
                 placeholder="Description"
-                className="w-full p-3 border-0 appearance-none placeholder:text-gray-400 focus:outline-none focus:ring-0"
+                className="w-full p-3 border-0 rounded-b appearance-none placeholder:text-gray-400 focus:outline-none focus:ring-0"
                 onChange={(e) => handleOnChange(e)}
               />
             </div>

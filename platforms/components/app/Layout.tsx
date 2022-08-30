@@ -52,7 +52,7 @@ export default function Layout({ children }: LayoutProps) {
           <meta name="twitter:image" content={logo} />
         </Head>
         <div className="absolute left-0 right-0 h-16 bg-white border-b border-gray-200">
-          <div className="flex items-center justify-end h-full max-w-screen-xl px-10 mx-auto sm:px-20">
+          <div className="flex items-center justify-end h-full px-10 mx-auto max-w-screen-2xl sm:px-20">
             <div className="flex space-x-4">
               <Link href="/">
                 <a className="flex items-center justify-center">
