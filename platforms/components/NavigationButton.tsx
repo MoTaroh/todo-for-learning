@@ -1,25 +1,27 @@
+import { ColorUnion } from '@/types/colorUnion';
 import { EllipsisHorizontalIcon } from '@heroicons/react/24/outline';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import Circle from './atom/Circle';
 interface Props {
-  color: string;
+  color: ColorUnion;
   text: string;
   open: boolean;
 }
 
 export default function NavigationButton({ color, text, open }: Props) {
   const [click, setClick] = useState(false);
-  const handleClick = () => setClick(!click);
-  const bgColor = 'bg-' + color + '-600';
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setClick(!click);
+  };
 
   return (
-    <a
+    <div
       className={`flex h-14 group items-center justify-center px-3 space-x-2 rounded hover:bg-white ${
         !open && 'w-12 h-12'
       }`}
     >
-      <div
-        className={`${open ? 'w-3 h-3' : 'w-5 h-5'} ${bgColor} rounded-full`}
-      ></div>
+      <Circle size={open ? 'small' : 'big'} color={color}></Circle>
       {open && <span className="flex-1 text-lg text-gray-900">{text}</span>}
       {open && (
         <button
@@ -29,6 +31,6 @@ export default function NavigationButton({ color, text, open }: Props) {
           <EllipsisHorizontalIcon className="w-6 h-6"></EllipsisHorizontalIcon>
         </button>
       )}
-    </a>
+    </div>
   );
 }

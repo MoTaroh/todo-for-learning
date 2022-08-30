@@ -6,25 +6,17 @@ import {
 } from '@heroicons/react/24/outline';
 import { CheckIcon } from '@heroicons/react/20/solid';
 import Badge from './Badge';
+import { TaskData } from '@/types/task';
+import { CategoryData } from '@/types/category';
 
-interface TaskData {
-  readonly id: string | undefined;
-  name: string;
-  description: string;
-  done: boolean;
-  removed: boolean;
-  categoryId: string | null;
-  category: {
-    id: string;
-    name: string;
-    color: string;
-  } | null;
+interface TaskResponse extends TaskData {
+  category: CategoryData | null;
 }
 interface Props {
-  task: TaskData;
-  handleOnCheck: (task: TaskData) => Promise<void>;
-  handleOnRemove: (task: TaskData) => Promise<void>;
-  handleOnUpdate: (task: TaskData, text: string) => Promise<void>;
+  task: TaskResponse;
+  handleOnCheck: (task: TaskResponse) => Promise<void>;
+  handleOnRemove: (task: TaskResponse) => Promise<void>;
+  handleOnUpdate: (task: TaskResponse, text: string) => Promise<void>;
 }
 
 export default function TaskItem({
@@ -55,10 +47,7 @@ export default function TaskItem({
   };
 
   return (
-    <div
-      onClick={}
-      className="flex items-start justify-between p-3 space-x-3 rounded appearance-none cursor-pointer group hover:bg-gray-100 focus-within:outline-none focus-within:border-gray-900 focus-within:ring-gray-900"
-    >
+    <div className="flex items-start justify-between p-3 space-x-3 rounded appearance-none cursor-pointer group hover:bg-gray-100 focus-within:outline-none focus-within:border-gray-900 focus-within:ring-gray-900">
       <div className="flex items-start flex-1 space-x-3">
         <button
           onClick={onChecked}

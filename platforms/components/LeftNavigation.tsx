@@ -1,3 +1,4 @@
+import { CategoryData } from '@/types/category';
 import { ChevronDoubleLeftIcon, PlusIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -7,7 +8,7 @@ export default function LeftNavigation() {
   const [open, setOpen] = useState(true);
   const handleOpen = () => setOpen(!open);
 
-  const categories = [
+  const categories: CategoryData[] = [
     { id: 'id1', name: 'Personal', color: 'green' },
     { id: 'id2', name: 'Work', color: 'blue' },
   ];
