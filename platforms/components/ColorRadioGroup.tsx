@@ -1,3 +1,4 @@
+import { ColorUnion } from '@/types/colorUnion';
 import { RadioGroup } from '@headlessui/react';
 import { useState } from 'react';
 
@@ -11,14 +12,16 @@ const colorList = [
   'purple',
   'pink',
 ];
+interface Props {
+  categoryColor: ColorUnion;
+  handleColor: (color: ColorUnion) => void;
+}
 
-export default function ColorRadioGroup() {
-  const [color, setColor] = useState('gray');
-
+export default function ColorRadioGroup({ categoryColor, handleColor }: Props) {
   return (
     <RadioGroup
-      value={color}
-      onChange={setColor}
+      value={categoryColor}
+      onChange={handleColor}
       className="flex flex-col justify-start space-y-2"
     >
       <RadioGroup.Label className="text-sm font-bold">Color</RadioGroup.Label>
