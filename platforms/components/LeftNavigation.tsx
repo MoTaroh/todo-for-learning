@@ -22,6 +22,9 @@ const MODAL_ACTION = {
 export default function LeftNavigation() {
   // For UI
   const [categories, setCategories] = useState<CategoryData[]>([]);
+  const [categoryToChange, setCategoryToChange] = useState<CategoryData | null>(
+    null
+  );
   const [expand, setExpand] = useState(true);
   const handleExpand = () => setExpand(!expand);
   const [showModal, toggleShowModal] = useState(false);
@@ -32,19 +35,19 @@ export default function LeftNavigation() {
     setCategoryName(e.target.value);
   const [categoryColor, setCategoryColor] = useState<ColorUnion>('gray');
   const handleColor = (color: ColorUnion) => setCategoryColor(color);
-  const setCategoryToEdit = (category: CategoryData) => {
-    setCategoryName(category.name);
-    setCategoryColor(category.color);
+  const setTargetCategory = (category: CategoryData) => {
+    setCategoryToChange(category);
   };
 
-  useEffect(() => {
-    async function fetchCategories() {
-      const res = await fetch('/api/categories');
-      if (res.ok) {
-        const fetchedCategories: CategoryData[] = await res.json();
-        setCategories(fetchedCategories);
-      }
+  async function fetchCategories() {
+    const res = await fetch('/api/categories');
+    if (res.ok) {
+      const fetchedCategories: CategoryData[] = await res.json();
+      setCategories(fetchedCategories);
     }
+  }
+
+  useEffect(() => {
     fetchCategories();
   }, []);
 
@@ -72,9 +75,25 @@ export default function LeftNavigation() {
       console.error(`Error occured: ${JSON.stringify(res)}`);
     }
   };
+  const deleteCategory = async () => {
+    if (!categoryToChange) return;
+    const categoryId = categoryToChange.id;
+    const res = await fetch(`/api/categories/${categoryId}`, {
+      method: HttpMethod.DELETE,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (res.ok) {
+      await fetchCategories();
+      toggleShowModal(false);
+      setCategoryToChange(null);
+    }
+  };
   const onCancel = () => {
     toggleShowModal(false);
     // reset to default
+    setCategoryToChange(null);
     setCategoryName('');
     setCategoryColor('gray');
   };
@@ -155,7 +174,7 @@ export default function LeftNavigation() {
                                     changeModalAction(
                                       MODAL_ACTION.EDIT_CATEGORY
                                     );
-                                    setCategoryToEdit(category);
+                                    setTargetCategory(category);
                                   }}
                                   className={`text-sm px-3 py-2 cursor-default text-gray-900 ${
                                     active && 'bg-gray-100'
@@ -168,6 +187,13 @@ export default function LeftNavigation() {
                             <Menu.Item>
                               {({ active }) => (
                                 <div
+                                  onClick={() => {
+                                    toggleShowModal(true);
+                                    changeModalAction(
+                                      MODAL_ACTION.DELETE_CATEGORY
+                                    );
+                                    setTargetCategory(category);
+                                  }}
                                   className={`text-sm px-3 py-2 cursor-default text-red-600 ${
                                     active && 'bg-gray-100'
                                   }`}
@@ -259,7 +285,7 @@ export default function LeftNavigation() {
             {modalAction === MODAL_ACTION.EDIT_CATEGORY && (
               <Dialog.Panel className="max-w-xl px-12 pt-12 pb-6 mx-auto space-y-12 text-gray-900 bg-white rounded-md">
                 <Dialog.Title className="text-2xl font-bold">
-                  Add New Category
+                  Edit Category
                 </Dialog.Title>
 
                 <div className="flex flex-col w-full space-y-6">
@@ -273,13 +299,13 @@ export default function LeftNavigation() {
                     <TextInput
                       id={'category-name'}
                       placeholder={'Category Name'}
-                      value={categoryName}
+                      value={categoryToChange?.name}
                       onChange={onChange}
                     ></TextInput>
                   </div>
                   <div className="flex flex-col justify-start space-y-2">
                     <ColorRadioGroup
-                      categoryColor={categoryColor}
+                      categoryColor={categoryToChange?.color}
                       handleColor={handleColor}
                     ></ColorRadioGroup>
                   </div>
@@ -295,7 +321,45 @@ export default function LeftNavigation() {
                     onClick={createCategory}
                     className="w-24 px-4 py-3 text-lg font-semibold text-center text-white bg-gray-900 rounded hover:bg-gray-700"
                   >
-                    Add
+                    Apply
+                  </button>
+                </div>
+              </Dialog.Panel>
+            )}
+            {modalAction === MODAL_ACTION.DELETE_CATEGORY && (
+              <Dialog.Panel className="max-w-xl px-12 pt-12 pb-6 mx-auto space-y-12 text-gray-900 bg-white rounded-md">
+                <Dialog.Title className="text-2xl font-bold text-red-600">
+                  Delete Category
+                </Dialog.Title>
+
+                <div className="flex flex-col items-center w-full space-y-6">
+                  <div className="flex items-center space-x-4">
+                    <Circle
+                      size={'big'}
+                      color={categoryToChange?.color}
+                    ></Circle>
+                    <span className="text-2xl font-bold text-gray-900">
+                      {categoryToChange?.name}
+                    </span>
+                  </div>
+                  <span className="text-gray-900">
+                    Are you sure you want to delete this category?
+                    <br />
+                    Associated tasks will be also deleted.
+                  </span>
+                </div>
+                <div className="flex justify-center space-x-12">
+                  <button
+                    onClick={onCancel}
+                    className="w-24 px-4 py-3 text-lg font-semibold text-center text-gray-900 rounded hover:text-gray-700"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={deleteCategory}
+                    className="w-24 px-4 py-3 text-lg font-semibold text-center text-white bg-red-600 rounded hover:bg-red-400"
+                  >
+                    Delete
                   </button>
                 </div>
               </Dialog.Panel>
