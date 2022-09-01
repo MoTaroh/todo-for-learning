@@ -13,7 +13,7 @@ const colorList = [
   'pink',
 ];
 interface Props {
-  categoryColor: ColorUnion;
+  categoryColor: ColorUnion | undefined;
   handleColor: (color: ColorUnion) => void;
 }
 

@@ -2,7 +2,7 @@ import { ColorUnion } from '@/types/colorUnion';
 
 interface Props {
   size: 'small' | 'big';
-  color: ColorUnion;
+  color: ColorUnion | undefined;
 }
 
 export default function Circle({ size, color }: Props) {

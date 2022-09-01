@@ -1,7 +1,7 @@
 interface Props {
   id: string;
   placeholder: string;
-  value: string;
+  value: string | undefined;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
