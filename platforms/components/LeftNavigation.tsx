@@ -1,4 +1,9 @@
-import { HttpMethod } from '@/types';
+import {
+  createCategory,
+  deleteCategory,
+  fetchCategories,
+  updateCategory,
+} from '@/lib/categoryApi';
 import { CategoryData } from '@/types/category';
 import { ColorUnion } from '@/types/colorUnion';
 import { Dialog, Menu, Transition } from '@headlessui/react';
@@ -46,86 +51,59 @@ export default function LeftNavigation() {
     setCategoryColor('gray');
   };
 
-  async function fetchCategories() {
-    const res = await fetch('/api/categories');
-    if (res.ok) {
-      const fetchedCategories: CategoryData[] = await res.json();
-      setCategories(fetchedCategories);
-    } else {
-      console.error(res);
-    }
-  }
-
   useEffect(() => {
-    fetchCategories();
+    async function initial() {
+      const fetchedCategories: CategoryData[] = await fetchCategories();
+      setCategories(fetchedCategories);
+    }
+    initial();
   }, []);
 
-  const createCategory = async () => {
+  const onCreate = async () => {
     const newCategory = {
       id: undefined,
       name: categoryName,
       color: categoryColor,
     };
-    const res = await fetch('/api/categories', {
-      method: HttpMethod.POST,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newCategory),
-    });
-    if (res.ok) {
-      const createdCategory = await res.json();
-      const newCategories = [...categories, createdCategory];
-      toggleShowModal(false);
-      resetStates();
-      setCategories(newCategories);
-    } else {
-      console.error(`Error occured: ${JSON.stringify(res)}`);
-    }
+    const created = await createCategory(newCategory);
+    const newCategories = [...categories, created];
+    toggleShowModal(false);
+    resetStates();
+    setCategories(newCategories);
   };
-  const editCategory = async () => {
+  const onUpdate = async () => {
     if (!categoryToChange) return;
     const toUpdate = {
       id: categoryToChange.id,
       name: categoryName,
       color: categoryColor,
     };
-    const res = await fetch(`/api/categories/${toUpdate.id}`, {
-      method: HttpMethod.PUT,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(toUpdate),
+    const updated = await updateCategory(toUpdate);
+    const newCategories = categories.map((category) => {
+      if (category.id === updated.id) {
+        return updated;
+      }
+      return category;
     });
-    if (res.ok) {
-      const newCategories = categories.map((category) => {
-        if (category.id === toUpdate.id) {
-          return toUpdate;
-        }
-        return category;
-      });
-      toggleShowModal(false);
-      resetStates();
-      setCategories(newCategories);
-    } else {
-      console.error(`Error occured: ${JSON.stringify(res)}`);
-    }
+    toggleShowModal(false);
+    resetStates();
+    setCategories(newCategories);
   };
-  const deleteCategory = async () => {
+  const onDelete = async () => {
     if (!categoryToChange) return;
     const categoryId = categoryToChange.id;
-    const res = await fetch(`/api/categories/${categoryId}`, {
-      method: HttpMethod.DELETE,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    if (res.ok) {
-      await fetchCategories();
+    if (!categoryId) {
+      console.error('You need to specify category ID');
+      return;
+    }
+    const status = await deleteCategory(categoryId);
+    if (status === 204) {
+      const fetchedCategories: CategoryData[] = await fetchCategories();
+      setCategories(fetchedCategories);
       toggleShowModal(false);
       resetStates();
     } else {
-      console.error(res);
+      console.error('Error occured when delete category');
     }
   };
   const onCancel = () => {
@@ -313,7 +291,7 @@ export default function LeftNavigation() {
                     Cancel
                   </button>
                   <button
-                    onClick={createCategory}
+                    onClick={onCreate}
                     className="w-24 px-4 py-3 text-lg font-semibold text-center text-white bg-gray-900 rounded hover:bg-gray-700"
                   >
                     Add
@@ -357,7 +335,7 @@ export default function LeftNavigation() {
                     Cancel
                   </button>
                   <button
-                    onClick={editCategory}
+                    onClick={onUpdate}
                     className="w-24 px-4 py-3 text-lg font-semibold text-center text-white bg-gray-900 rounded hover:bg-gray-700"
                   >
                     Apply
@@ -395,7 +373,7 @@ export default function LeftNavigation() {
                     Cancel
                   </button>
                   <button
-                    onClick={deleteCategory}
+                    onClick={onDelete}
                     className="w-24 px-4 py-3 text-lg font-semibold text-center text-white bg-red-600 rounded hover:bg-red-400"
                   >
                     Delete
