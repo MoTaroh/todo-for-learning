@@ -10,7 +10,7 @@ module.exports = {
   safelist: [
     {
       pattern:
-        /(bg|text)-(gray|red|yellow|green|blue|indigo|purple|pink)-(200|600|800)/,
+        /(bg|text|ring)-(gray|red|yellow|green|blue|indigo|purple|pink)-(200|400|500|600|800)/,
     },
   ],
   darkMode: 'media',
