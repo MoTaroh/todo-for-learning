@@ -37,6 +37,13 @@ export default function LeftNavigation() {
   const handleColor = (color: ColorUnion) => setCategoryColor(color);
   const setTargetCategory = (category: CategoryData) => {
     setCategoryToChange(category);
+    setCategoryName(category.name);
+    setCategoryColor(category.color);
+  };
+  const resetStates = () => {
+    setCategoryToChange(null);
+    setCategoryName('');
+    setCategoryColor('gray');
   };
 
   async function fetchCategories() {
@@ -44,6 +51,8 @@ export default function LeftNavigation() {
     if (res.ok) {
       const fetchedCategories: CategoryData[] = await res.json();
       setCategories(fetchedCategories);
+    } else {
+      console.error(res);
     }
   }
 
@@ -68,8 +77,35 @@ export default function LeftNavigation() {
       const createdCategory = await res.json();
       const newCategories = [...categories, createdCategory];
       toggleShowModal(false);
-      setCategoryName('');
-      setCategoryColor('gray');
+      resetStates();
+      setCategories(newCategories);
+    } else {
+      console.error(`Error occured: ${JSON.stringify(res)}`);
+    }
+  };
+  const editCategory = async () => {
+    if (!categoryToChange) return;
+    const toUpdate = {
+      id: categoryToChange.id,
+      name: categoryName,
+      color: categoryColor,
+    };
+    const res = await fetch(`/api/categories/${toUpdate.id}`, {
+      method: HttpMethod.PUT,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(toUpdate),
+    });
+    if (res.ok) {
+      const newCategories = categories.map((category) => {
+        if (category.id === toUpdate.id) {
+          return toUpdate;
+        }
+        return category;
+      });
+      toggleShowModal(false);
+      resetStates();
       setCategories(newCategories);
     } else {
       console.error(`Error occured: ${JSON.stringify(res)}`);
@@ -87,15 +123,15 @@ export default function LeftNavigation() {
     if (res.ok) {
       await fetchCategories();
       toggleShowModal(false);
-      setCategoryToChange(null);
+      resetStates();
+    } else {
+      console.error(res);
     }
   };
   const onCancel = () => {
     toggleShowModal(false);
     // reset to default
-    setCategoryToChange(null);
-    setCategoryName('');
-    setCategoryColor('gray');
+    resetStates();
   };
 
   return (
@@ -210,7 +246,10 @@ export default function LeftNavigation() {
                 </Link>
               ))}
               <button
-                onClick={() => toggleShowModal(true)}
+                onClick={() => {
+                  toggleShowModal(true);
+                  changeModalAction(MODAL_ACTION.ADD_CATEGORY);
+                }}
                 className="flex w-full p-3 space-x-2 text-gray-600 hover:bg-white"
               >
                 <div>
@@ -299,13 +338,13 @@ export default function LeftNavigation() {
                     <TextInput
                       id={'category-name'}
                       placeholder={'Category Name'}
-                      value={categoryToChange?.name}
+                      value={categoryName}
                       onChange={onChange}
                     ></TextInput>
                   </div>
                   <div className="flex flex-col justify-start space-y-2">
                     <ColorRadioGroup
-                      categoryColor={categoryToChange?.color}
+                      categoryColor={categoryColor}
                       handleColor={handleColor}
                     ></ColorRadioGroup>
                   </div>
@@ -318,7 +357,7 @@ export default function LeftNavigation() {
                     Cancel
                   </button>
                   <button
-                    onClick={createCategory}
+                    onClick={editCategory}
                     className="w-24 px-4 py-3 text-lg font-semibold text-center text-white bg-gray-900 rounded hover:bg-gray-700"
                   >
                     Apply
