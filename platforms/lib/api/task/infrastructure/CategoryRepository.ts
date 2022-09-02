@@ -60,7 +60,7 @@ export class CategoryRepository implements ICategoryRepository {
   }
 
   async delete(categoryId: ObjectId): Promise<void> {
-    prisma.category.delete({
+    await prisma.category.delete({
       where: { id: categoryId.value },
     });
   }
