@@ -1,8 +1,12 @@
 import cuid from 'cuid';
+import { Category } from '../../domain/Category';
+import { CategoryColor } from '../../domain/CategoryColor';
+import { CategoryName } from '../../domain/CategoryName';
 import { ObjectId } from '../../domain/ObjectId';
 import { Task } from '../../domain/Task';
 import { TaskDescription } from '../../domain/TaskDescription';
 import { TaskName } from '../../domain/TaskName';
+import { CategoryRepository } from '../../infrastructure/CategoryRepository';
 import { TaskRepository } from '../../infrastructure/TaskRepository';
 import { CreateTaskUseCase } from '../CreateTaskUseCase';
 
@@ -15,6 +19,15 @@ describe('UseCase: CreateTask', () => {
     const taskDescription = 'test task description';
     const categoryId = cuid();
     const userId = cuid();
+    // mock find category
+    jest.spyOn(CategoryRepository.prototype, 'findById').mockResolvedValue(
+      Category.reconstruct({
+        id: new ObjectId(categoryId),
+        name: new CategoryName('test category'),
+        color: new CategoryColor('gray'),
+        userId: userId,
+      })
+    );
     const createSpy = jest
       .spyOn(TaskRepository.prototype, 'create')
       .mockResolvedValue(
