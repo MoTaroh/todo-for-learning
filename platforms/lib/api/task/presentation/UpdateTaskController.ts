@@ -8,13 +8,15 @@ export class UpdateTaskController {
   async updateTask(req: NextApiRequest, res: NextApiResponse) {
     const usecase = new UpdateTaskDetailUseCase();
     const { taskId } = req.query;
-    const { name } = req.body;
+    const { name, description, categoryId } = req.body;
 
     if (Array.isArray(taskId) || !taskId)
       return res.status(400).end('Bad request. taskId parameter is invalid.');
 
     const detail = {
       name: name,
+      description: description,
+      categoryId: categoryId,
     };
     try {
       const updatedTask = await usecase.execute(taskId, detail);

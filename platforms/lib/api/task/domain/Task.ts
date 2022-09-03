@@ -109,6 +109,12 @@ export class Task implements TaskType {
     }
     this.name = name;
   }
+  changeDescription(description: TaskDescription) {
+    if (this.removed) {
+      throw new Error('削除済みタスクは編集できません');
+    }
+    this.description = description;
+  }
   assignCategory(categoryId: ObjectId) {
     this.categoryId = categoryId;
   }
