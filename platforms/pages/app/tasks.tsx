@@ -37,8 +37,6 @@ export default function Tasks() {
     resetModalInput();
   };
   const selectTaskItem = (task: TaskResponse) => {
-    console.log(task);
-
     selectTask(task);
     selectTaskName(task.name || '');
     selectTaskDescription(task.description || '');
@@ -48,6 +46,11 @@ export default function Tasks() {
   const resetModalInput = () => {
     selectTaskName('');
     selectTaskDescription('');
+    selectCategory(null);
+  };
+  const resetCreateInput = () => {
+    setInputTaskName('');
+    setInputTaskDescription('');
     selectCategory(null);
   };
 
@@ -65,6 +68,17 @@ export default function Tasks() {
 
   const onCreateTask = async () => {
     if (!inputTaskName) return;
+    // set categoryId
+    let categoryId = null;
+    if (
+      !selectedCategory ||
+      !selectedCategory.id ||
+      selectedCategory.id === 'default'
+    ) {
+      categoryId = null;
+    } else {
+      categoryId = selectedCategory.id;
+    }
 
     const newTask: TaskData = {
       id: undefined,
@@ -72,13 +86,12 @@ export default function Tasks() {
       description: inputTaskDescription,
       done: false,
       removed: false,
-      categoryId: null,
+      categoryId: categoryId,
     };
 
     const createdTask: TaskResponse = await createTask(newTask);
     const newTasks = [createdTask, ...tasks];
-    setInputTaskName('');
-    setInputTaskDescription('');
+    resetCreateInput();
     setTasks(newTasks);
   };
   const onUpdateTask = async () => {
@@ -102,11 +115,7 @@ export default function Tasks() {
       done: selectedTask.done,
       removed: selectedTask.removed,
       categoryId: categoryId,
-      // selectedCategory.id === 'default' || !selectedCategory.id
-      //   ? null
-      //   : selectedCategory.id,
     };
-    console.log(toUpdate);
 
     const updated = await updateTask(toUpdate);
     const newTasks = tasks.map((task) => {
@@ -149,10 +158,6 @@ export default function Tasks() {
       default:
         break;
     }
-  };
-  const onChangeCategoryInput = (category: CategoryData | null) => {
-    selectCategory(category);
-    console.log(selectedCategory);
   };
 
   const handleOnCheck = async (task: TaskResponse) => {
@@ -212,7 +217,7 @@ export default function Tasks() {
               onCreateTask();
             }}
           >
-            <div className="w-full mb-6 text-gray-900 border border-gray-600 divide-y divide-gray-600 rounded divide-dotted">
+            <div className="w-full text-gray-900 border border-gray-600 divide-y divide-gray-600 rounded divide-dotted">
               <div className="flex items-center">
                 <input
                   id="mainTaskName"
@@ -223,10 +228,9 @@ export default function Tasks() {
                   onChange={(e) => onChangeTextInput(e)}
                 />
                 <ListBox
-                  categories={[
-                    { id: 'default', name: 'No Category', color: 'gray' },
-                    ...categories,
-                  ]}
+                  categories={categories}
+                  value={selectedCategory}
+                  onChange={selectCategory}
                 ></ListBox>
               </div>
               <input
@@ -237,6 +241,21 @@ export default function Tasks() {
                 className="w-full p-3 border-0 rounded-b appearance-none placeholder:text-gray-400 focus:outline-none focus:ring-0"
                 onChange={(e) => onChangeTextInput(e)}
               />
+            </div>
+            <div className="flex items-center justify-end mt-2 mb-6 space-x-3">
+              <button
+                type="reset"
+                onClick={resetCreateInput}
+                className="px-3 py-2 font-bold text-gray-900 bg-white rounded hover:text-gray-700"
+              >
+                Clear
+              </button>
+              <button
+                type="submit"
+                className="px-3 py-2 font-bold text-white bg-gray-900 rounded hover:bg-gray-700"
+              >
+                Add Task
+              </button>
             </div>
           </form>
           {!isLoading ? (
