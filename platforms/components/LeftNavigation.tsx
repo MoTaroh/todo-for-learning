@@ -60,6 +60,8 @@ export default function LeftNavigation() {
   }, []);
 
   const onCreate = async () => {
+    if (!categoryName) return;
+
     const newCategory = {
       id: undefined,
       name: categoryName,
@@ -103,7 +105,7 @@ export default function LeftNavigation() {
       toggleShowModal(false);
       resetStates();
     } else {
-      console.error('Error occured when delete category');
+      console.error('Error occured when deleting category');
     }
   };
   const onCancel = () => {
