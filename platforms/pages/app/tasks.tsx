@@ -1,11 +1,16 @@
 import Layout from '@/components/app/Layout';
 import TaskItem from '@/components/TaskItem';
-import { HttpMethod } from '@/types';
 import { useEffect, useState } from 'react';
 import { CategoryData } from '@/types/category';
 import { TaskData } from '@/types/task';
 import ListBox from '@/components/ListBox';
-import { createTask, fetchTasks, removeTask, updateTask } from '@/lib/taskApi';
+import {
+  checkTask,
+  createTask,
+  fetchTasks,
+  removeTask,
+  updateTask,
+} from '@/lib/taskApi';
 import { fetchCategories } from '@/lib/categoryApi';
 import { Dialog } from '@headlessui/react';
 import TextInput from '@/components/atom/TextInput';
@@ -24,6 +29,7 @@ export default function Tasks() {
   // This is for main input
   const [inputTaskName, setInputTaskName] = useState('');
   const [inputTaskDescription, setInputTaskDescription] = useState('');
+  const [showSubmit, toggleShowSubmit] = useState<boolean>(false);
   // This is for each input
   const [selectedTask, selectTask] = useState<TaskData | null>(null);
   const [selectedTaskName, selectTaskName] = useState('');
@@ -140,11 +146,23 @@ export default function Tasks() {
       console.error('Error occured when removing category');
     }
   };
+  const onCheckTask = async (task: TaskResponse) => {
+    const toUpdate = { ...task, done: !task.done };
+    checkTask(toUpdate);
+    const newTasks = tasks.map((task) => {
+      if (task.id === toUpdate.id) return toUpdate;
+      return task;
+    });
+    setTasks(newTasks);
+  };
 
   const onChangeTextInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     switch (e.target.id) {
       case 'mainTaskName':
         setInputTaskName(e.target.value);
+        e.target.value.length > 0
+          ? toggleShowSubmit(true)
+          : toggleShowSubmit(false);
         break;
       case 'mainTaskDescription':
         setInputTaskDescription(e.target.value);
@@ -158,25 +176,6 @@ export default function Tasks() {
       default:
         break;
     }
-  };
-
-  const handleOnCheck = async (task: TaskResponse) => {
-    const toUpdate = { ...task, done: !task.done };
-    fetch(`/api/tasks/${task.id}/done`, {
-      method: HttpMethod.PATCH,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(toUpdate),
-    });
-    const newTasks = tasks.map((t) => {
-      if (t.id === task.id) {
-        return toUpdate;
-      }
-      return t;
-    });
-
-    setTasks(newTasks);
   };
 
   const removedTasks = tasks
@@ -210,8 +209,9 @@ export default function Tasks() {
     <Layout>
       <div className="flex flex-col h-full max-w-screen-xl p-10 mx-auto sm:px-20">
         <h1 className="text-2xl font-bold">My Tasks</h1>
-        <div className="flex flex-col h-full mt-6">
+        <div className="flex flex-col h-full">
           <form
+            className="my-6"
             onSubmit={(e) => {
               e.preventDefault();
               onCreateTask();
@@ -242,7 +242,11 @@ export default function Tasks() {
                 onChange={(e) => onChangeTextInput(e)}
               />
             </div>
-            <div className="flex items-center justify-end mt-2 mb-6 space-x-3">
+            <div
+              className={`items-center justify-end mt-2 space-x-3 ${
+                showSubmit ? 'flex' : 'hidden'
+              }`}
+            >
               <button
                 type="reset"
                 onClick={resetCreateInput}
@@ -268,7 +272,7 @@ export default function Tasks() {
                         <TaskItem
                           key={task.id}
                           task={task}
-                          handleOnCheck={handleOnCheck}
+                          handleOnCheck={onCheckTask}
                           handleOnClick={(task) => selectTaskItem(task)}
                         ></TaskItem>
                       ))}
@@ -286,7 +290,7 @@ export default function Tasks() {
                           <TaskItem
                             key={task.id}
                             task={task}
-                            handleOnCheck={handleOnCheck}
+                            handleOnCheck={onCheckTask}
                             handleOnClick={(task) => selectTaskItem(task)}
                           ></TaskItem>
                         ))}

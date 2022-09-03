@@ -44,6 +44,16 @@ export const updateTask = async (task: TaskData) => {
   }
 };
 
+export const checkTask = async (task: TaskData) => {
+  fetch(`/api/tasks/${task.id}/done`, {
+    method: HttpMethod.PATCH,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(task),
+  });
+};
+
 export const removeTask = async (task: TaskData) => {
   const res = await fetch(`/api/tasks/${task.id}/removed`, {
     method: HttpMethod.PATCH,
