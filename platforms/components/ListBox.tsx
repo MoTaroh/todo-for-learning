@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Dispatch, Fragment, SetStateAction } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { CategoryData } from '@/types/category';
@@ -6,27 +6,38 @@ import Circle from './atom/Circle';
 
 interface Props {
   categories: CategoryData[];
+  value: CategoryData | null;
+  onChange: Dispatch<SetStateAction<CategoryData | null>>;
 }
 
-export default function ListBox({ categories }: Props) {
-  const [selected, setSelected] = useState<CategoryData>(categories[0]);
+const nullCategory: CategoryData = {
+  id: 'default',
+  name: 'No Category',
+  color: 'gray',
+};
+
+export default function ListBox({ categories, value, onChange }: Props) {
+  if (!value) {
+    value = nullCategory;
+  }
+  const categoryList = [nullCategory, ...categories];
 
   return (
-    <Listbox value={selected} onChange={setSelected}>
+    <Listbox value={value} onChange={onChange}>
       <div className="relative mr-2 w-52">
         <Listbox.Button className="flex items-center justify-between w-full px-3 bg-gray-100 rounded h-9 focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
           <div className="flex items-center space-x-2">
-            {selected.id !== 'default' && (
+            {value.id !== 'default' && (
               <div
-                className={`w-3 h-3 rounded-full bg-${selected.color}-600`}
+                className={`w-3 h-3 rounded-full bg-${value.color}-600`}
               ></div>
             )}
             <span
               className={`font-base truncate ${
-                selected.id === 'default' ? 'text-gray-400' : 'text-gray-900'
+                value.id === 'default' ? 'text-gray-400' : 'text-gray-900'
               }`}
             >
-              {selected.name}
+              {value.name}
             </span>
           </div>
           <span className="flex items-center pointer-events-none">
@@ -43,7 +54,7 @@ export default function ListBox({ categories }: Props) {
           leaveTo="opacity-0"
         >
           <Listbox.Options className="absolute w-full py-1 mt-1 overflow-auto bg-white rounded shadow max-h-60 focus:outline-none">
-            {categories.map((category) => (
+            {categoryList.map((category) => (
               <Listbox.Option
                 key={category.id}
                 value={category}
@@ -55,11 +66,13 @@ export default function ListBox({ categories }: Props) {
                       active ? 'bg-gray-100' : 'bg-white '
                     }`}
                   >
-                    <Circle size={'small'} color={category.color}></Circle>
+                    {category.id !== 'default' && (
+                      <Circle size={'small'} color={category.color}></Circle>
+                    )}
                     <span
                       className={`ml-2 truncate ${
                         selected ? 'font-medium' : 'font-base'
-                      }`}
+                      } ${category.id === 'default' && 'ml-5'}`}
                     >
                       {category.name}
                     </span>
