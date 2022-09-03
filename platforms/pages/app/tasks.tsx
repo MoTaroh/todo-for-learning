@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { CategoryData } from '@/types/category';
 import { TaskData } from '@/types/task';
 import ListBox from '@/components/ListBox';
-import { createTask, fetchTasks, updateTask } from '@/lib/taskApi';
+import { createTask, fetchTasks, removeTask, updateTask } from '@/lib/taskApi';
 import { fetchCategories } from '@/lib/categoryApi';
 import { Dialog } from '@headlessui/react';
 import TextInput from '@/components/atom/TextInput';
@@ -37,9 +37,11 @@ export default function Tasks() {
     resetModalInput();
   };
   const selectTaskItem = (task: TaskResponse) => {
+    console.log(task);
+
     selectTask(task);
-    selectTaskName(task.name);
-    selectTaskDescription(task.description);
+    selectTaskName(task.name || '');
+    selectTaskDescription(task.description || '');
     selectCategory(task.category);
     toggleShowModal(true);
   };
@@ -80,18 +82,32 @@ export default function Tasks() {
     setTasks(newTasks);
   };
   const onUpdateTask = async () => {
-    if (!selectedTask || !selectedTaskName || !selectedCategory) return;
+    if (!selectedTask || !selectedTaskName) return;
+    // set categoryId
+    let categoryId = null;
+    if (
+      !selectedCategory ||
+      !selectedCategory.id ||
+      selectedCategory.id === 'default'
+    ) {
+      categoryId = null;
+    } else {
+      categoryId = selectedCategory.id;
+    }
+
     const toUpdate: TaskData = {
       id: selectedTask.id,
       name: selectedTaskName,
       description: selectedTaskDescription,
       done: selectedTask.done,
       removed: selectedTask.removed,
-      categoryId:
-        selectedCategory.id === 'default' || !selectedCategory.id
-          ? null
-          : selectedCategory.id,
+      categoryId: categoryId,
+      // selectedCategory.id === 'default' || !selectedCategory.id
+      //   ? null
+      //   : selectedCategory.id,
     };
+    console.log(toUpdate);
+
     const updated = await updateTask(toUpdate);
     const newTasks = tasks.map((task) => {
       if (task.id === updated.id) return updated;
@@ -100,8 +116,23 @@ export default function Tasks() {
     cancelModal();
     setTasks(newTasks);
   };
+  const onDeleteTask = async () => {
+    if (!selectedTask) return;
+    const toRemove: TaskData = {
+      ...selectedTask,
+      removed: !selectedTask.removed,
+    };
+    const status = await removeTask(toRemove);
+    if (status === 204) {
+      const fetchedTasks: TaskResponse[] = await fetchTasks();
+      setTasks(fetchedTasks);
+      cancelModal();
+    } else {
+      console.error('Error occured when removing category');
+    }
+  };
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangeTextInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     switch (e.target.id) {
       case 'mainTaskName':
         setInputTaskName(e.target.value);
@@ -119,6 +150,10 @@ export default function Tasks() {
         break;
     }
   };
+  const onChangeCategoryInput = (category: CategoryData | null) => {
+    selectCategory(category);
+    console.log(selectedCategory);
+  };
 
   const handleOnCheck = async (task: TaskResponse) => {
     const toUpdate = { ...task, done: !task.done };
@@ -132,25 +167,6 @@ export default function Tasks() {
     const newTasks = tasks.map((t) => {
       if (t.id === task.id) {
         return toUpdate;
-      }
-      return t;
-    });
-
-    setTasks(newTasks);
-  };
-
-  const handleOnRemove = async (task: TaskResponse) => {
-    const toRemove = { ...task, removed: !task.removed };
-    fetch(`/api/tasks/${task.id}/removed`, {
-      method: HttpMethod.PATCH,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(toRemove),
-    });
-    const newTasks = tasks.map((t) => {
-      if (t.id === task.id) {
-        return toRemove;
       }
       return t;
     });
@@ -204,7 +220,7 @@ export default function Tasks() {
                   value={inputTaskName}
                   placeholder="Press “Enter” to add a new task."
                   className="flex-1 p-3 border-0 rounded-t appearance-none placeholder:text-gray-400 focus:outline-none focus:ring-0"
-                  onChange={(e) => onChange(e)}
+                  onChange={(e) => onChangeTextInput(e)}
                 />
                 <ListBox
                   categories={[
@@ -219,7 +235,7 @@ export default function Tasks() {
                 value={inputTaskDescription}
                 placeholder="Description"
                 className="w-full p-3 border-0 rounded-b appearance-none placeholder:text-gray-400 focus:outline-none focus:ring-0"
-                onChange={(e) => onChange(e)}
+                onChange={(e) => onChangeTextInput(e)}
               />
             </div>
           </form>
@@ -290,7 +306,10 @@ export default function Tasks() {
                 <Dialog.Title className="text-2xl font-bold">
                   Edit Task
                 </Dialog.Title>
-                <button className="flex items-center justify-center p-2 text-red-600 rounded hover:bg-red-200">
+                <button
+                  onClick={onDeleteTask}
+                  className="flex items-center justify-center p-2 text-red-600 rounded hover:bg-red-200"
+                >
                   <TrashIcon className="w-6 h-6"></TrashIcon>
                 </button>
               </div>
@@ -304,7 +323,7 @@ export default function Tasks() {
                     id={'name'}
                     placeholder={'Task Name'}
                     value={selectedTaskName}
-                    onChange={onChange}
+                    onChange={onChangeTextInput}
                   ></TextInput>
                 </div>
                 <div className="flex flex-col justify-start space-y-2">
@@ -315,7 +334,7 @@ export default function Tasks() {
                     id={'description'}
                     placeholder={'Task Description'}
                     value={selectedTaskDescription}
-                    onChange={onChange}
+                    onChange={onChangeTextInput}
                   ></TextInput>
                 </div>
                 <div className="flex flex-col justify-start space-y-2">
@@ -324,7 +343,8 @@ export default function Tasks() {
                   </label>
                   <ListBoxInput
                     categories={categories}
-                    defaultCategory={selectedCategory}
+                    value={selectedCategory}
+                    onChange={selectCategory}
                   ></ListBoxInput>
                 </div>
               </div>
