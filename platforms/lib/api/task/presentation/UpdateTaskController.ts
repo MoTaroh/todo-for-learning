@@ -17,8 +17,8 @@ export class UpdateTaskController {
       name: name,
     };
     try {
-      await usecase.execute(taskId, detail);
-      return res.status(204).end();
+      const updatedTask = await usecase.execute(taskId, detail);
+      return res.status(200).json(updatedTask);
     } catch (error) {
       console.error(error);
       return res.status(500).end();
